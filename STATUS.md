@@ -20,9 +20,11 @@ GitHub:
 
 https://github.com/ShenJun93/shipsignal-panta
 
-Canonical remote `main`:
+Audited product-code baseline (before docs-only audit refreshes):
 
 `9652a475a79a09442ef54320caf51e00ca0a1cf7`
+
+Docs-only merges may advance `main`; use Git/Vercel directly for the current remote HEAD.
 
 PR #2:
 
@@ -50,10 +52,10 @@ https://github.com/ShenJun93/shipsignal-panta/pull/2 — **MERGED**
 - `git diff --check` — PASS.
 - Local `next build` remains unreliable on this Windows host because of the existing Application Control / SWC environment. Vercel production build is the deployment build gate.
 
-### Vercel production
+### Verified Vercel production snapshot — 2026-10-01
 
 - Project: `shipsignal-panta`.
-- Production Git SHA: `9652a475a79a09442ef54320caf51e00ca0a1cf7`.
+- Verified production Git SHA at smoke time: `9652a475a79a09442ef54320caf51e00ca0a1cf7`.
 - Production deployment: **READY**.
 - Deployment ID: `dpl_GU1hRicA3AzTiM1HZB6WKzPe2za9`.
 - `PANTA_API_KEY` is stored as a Vercel **Production** secret.
