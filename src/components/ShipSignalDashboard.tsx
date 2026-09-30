@@ -66,6 +66,36 @@ export default function ShipSignalDashboard() {
     };
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("demo") !== "1") return;
+
+    let cancelled = false;
+
+    async function loadDemoPullRequest() {
+      setLoadingPr(true);
+      setPrError("");
+      try {
+        const response = await fetch(`/api/github-pr?url=${encodeURIComponent(DEFAULT_PR)}`);
+        const data = (await response.json()) as GitHubPullRequestSignal & { error?: string };
+        if (!response.ok) throw new Error(data.error || "Unable to analyze pull request");
+        if (!cancelled) setPr(data);
+      } catch (error) {
+        if (!cancelled) {
+          setPr(null);
+          setPrError(error instanceof Error ? error.message : "Unable to analyze pull request");
+        }
+      } finally {
+        if (!cancelled) setLoadingPr(false);
+      }
+    }
+
+    loadDemoPullRequest();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const selectedMarket = useMemo(
     () => feed?.items.find((market) => market.marketId === selectedMarketId) || null,
     [feed, selectedMarketId],
@@ -178,7 +208,7 @@ export default function ShipSignalDashboard() {
           </div>
         </section>
 
-        <section className="grid gap-5 lg:grid-cols-[1.08fr_0.92fr]">
+        <section id="evidence" className="grid gap-5 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="rounded-2xl border border-white/10 bg-[#0a151f]/90 p-5 sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
@@ -367,7 +397,7 @@ export default function ShipSignalDashboard() {
           </div>
         </section>
 
-        <section className="mt-5 rounded-2xl border border-white/10 bg-gradient-to-br from-[#0c1822] to-[#08121b] p-5 sm:p-7">
+        <section id="signal" className="mt-5 rounded-2xl border border-white/10 bg-gradient-to-br from-[#0c1822] to-[#08121b] p-5 sm:p-7">
           <div className="grid gap-7 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-300">
