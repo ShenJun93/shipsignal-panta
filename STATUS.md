@@ -1,6 +1,6 @@
 # ShipSignal Status
 
-Last updated: 2026-09-30
+Last updated: 2026-10-01
 
 ## Milestones
 
@@ -22,7 +22,7 @@ https://github.com/ShenJun93/shipsignal-panta
 
 Canonical remote `main`:
 
-`dc9030bd84eeee3a75cee0a8638332db1bb644a2`
+`9652a475a79a09442ef54320caf51e00ca0a1cf7`
 
 PR #2:
 
@@ -53,13 +53,15 @@ https://github.com/ShenJun93/shipsignal-panta/pull/2 — **MERGED**
 ### Vercel production
 
 - Project: `shipsignal-panta`.
-- Production Git SHA: `dc9030bd84eeee3a75cee0a8638332db1bb644a2`.
+- Production Git SHA: `9652a475a79a09442ef54320caf51e00ca0a1cf7`.
 - Production deployment: **READY**.
-- Deployment ID: `dpl_3RVyGNpXdTDztyJnV32MtiDcGirg`.
+- Deployment ID: `dpl_GU1hRicA3AzTiM1HZB6WKzPe2za9`.
 - `PANTA_API_KEY` is stored as a Vercel **Production** secret.
-- No runtime errors were found in the checked 30-minute window.
+- No runtime errors were found in the checked 1-hour window on 2026-10-01.
 
 ### Production smoke
+
+Revalidated on 2026-10-01 from a clean WAG BrowserPort session.
 
 - Homepage: HTTP 200.
 - GitHub PR #375 telemetry: PASS.

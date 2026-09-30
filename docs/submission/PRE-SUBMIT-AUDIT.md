@@ -1,6 +1,6 @@
 # ShipSignal — Pre-Submit Audit
 
-Last audited: 2026-09-30 (Asia/Ho_Chi_Minh)
+Last audited: 2026-10-01 (Asia/Ho_Chi_Minh)
 
 ## Decision
 
@@ -11,8 +11,8 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 ## Canonical product state
 
 - Workspace: `E:\Projects\BH-0005-shipsignal-panta`
-- Working branch: `work/shipsignal-presubmit-v1`
-- Branch base: current `origin/main` at `3fbfe9ce70fcbb5ef7131aa4ff27601f52a2345a`
+- Working branch: `work/shipsignal-presubmit-refresh-v1`
+- Canonical remote `main`: `9652a475a79a09442ef54320caf51e00ca0a1cf7`
 - Production: https://shipsignal-panta.vercel.app
 - GitHub: https://github.com/ShenJun93/shipsignal-panta
 - Colosseum project ID: `15220`
@@ -27,8 +27,8 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | --- | --- | --- |
 | Colosseum account + hackathon registration | PASS | Operator personally accepted the legal gate and registered. |
 | Colosseum project draft | PASS | Project ID `15220` exists and is editable. |
-| Production homepage | PASS | HTTP 200 on 2026-09-30. |
-| Live GitHub telemetry | PASS | `/api/github-pr` returned live PR #375 data and deliveryScore 80 on 2026-09-30. |
+| Production homepage | PASS | HTTP 200 and clean BrowserPort smoke on 2026-10-01. |
+| Live GitHub telemetry | PASS | Clean BrowserPort run on 2026-10-01 analyzed PR #375 successfully and showed delivery score 80. |
 | Panta attribution | PASS | Product visibly uses exact text **Powered by Panta**. |
 | Authenticated Panta API integration | PASS | Production `/api/markets` returns authenticated Panta API data. Current credential is a Panta **test** key and returns the official sandbox market, not mainnet data. |
 | Panta API legal gate | PASS — operator completed | Operator personally completed the Panta Terms / credential gate before authenticated API use. |
@@ -42,10 +42,10 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | Demo video | **FAIL / BLOCKER** | First capture was black; invalid captures were deleted. A new verified recording is required. |
 | Pitch video | **BLOCKED** | Separate public pitch video required, portal limit <= 2 minutes. |
 | Git history / hackathon-window evidence | PASS so far | ShipSignal repository and implementation commits are dated during the current hackathon period. Re-check before final submit. |
-| Secret scan | PASS as of 2026-09-30 | Workspace scan found no `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key pattern outside ignored build/dependency dirs. Re-run after Panta credential setup. |
+| Secret scan | PASS as of 2026-10-01 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material; only `.env.example` is tracked among `.env*` files. |
 | Local browser-profile hygiene | PASS | Temporary `.edge-demo*` profiles removed and ignored. |
 | Final clean-session judge test | PENDING | Open every public link from a clean session after final deployment. |
-| Final claim audit | PENDING | Ensure form/video/README do not claim live Panta data, users, traction, transactions, or partnerships unless verified. |
+| Final claim audit | **PENDING / BLOCKER** | Re-open Colosseum project details and remove any stale 2026-09-30 wording that still says Panta demo / credentials pending; form/video/README must consistently say authenticated Panta test/sandbox API, not mainnet. |
 
 ## Colosseum form audit
 
@@ -58,11 +58,11 @@ Current project-details values observed in the authenticated local Edge session:
 - Why now: present
 - Technology/AI disclosure: present
 - Solana: selected
-- Chain-use explanation: present and explicitly says M0 uses demo fixtures while live Panta credentials are pending
+- Chain-use explanation: present, but the copy observed on 2026-09-30 still says M0 uses demo fixtures while live Panta credentials are pending — re-open and update if that stale wording is still present
 - Category: `Developer Infrastructure`
 - Team base: `Vietnam`
 - Outside contributors disclosure: AI coding assistants disclosed; no unlisted human contributors claimed
-- Additional judge context: explicitly distinguishes GitHub-live vs Panta-demo
+- Additional judge context: the copy observed on 2026-09-30 still distinguishes GitHub-live vs Panta-demo — re-open and update if that stale wording is still present
 
 Missing required project field:
 
@@ -122,7 +122,7 @@ Observed 2026-09-30:
 
 Current ShipSignal status against this listing:
 
-**DO NOT SUBMIT YET.** ShipSignal now authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market. This proves real Panta API integration, but the response is explicitly **not mainnet** and the final working-demo video is still missing. Final sidetrack eligibility remains blocked until the environment labeling fix is deployed, the demo is re-recorded, and the submission language accurately describes this as Panta test/sandbox API data unless a production key is later used.
+**DO NOT SUBMIT YET.** ShipSignal now authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market. This proves real Panta API integration, and the production response/UI now explicitly label the environment as **test/sandbox, not mainnet**. Final sidetrack eligibility remains blocked until the demo is re-recorded and the submission language consistently describes this as Panta test/sandbox API data unless a production key is later used.
 
 ## Panta Terms audit
 
