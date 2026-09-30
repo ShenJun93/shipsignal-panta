@@ -24,6 +24,7 @@ export type PantaMarket = {
 
 export type MarketFeed = {
   mode: "live" | "demo";
+  environment: "production" | "test" | "demo";
   source: "panta";
   fetchedAt: string;
   items: PantaMarket[];
