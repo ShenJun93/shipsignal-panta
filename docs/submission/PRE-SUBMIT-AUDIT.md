@@ -33,7 +33,7 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | Authenticated Panta API integration | PASS | Production `/api/markets` returns authenticated Panta API data. Current credential is a Panta **test** key and returns the official sandbox market, not mainnet data. |
 | Panta API legal gate | PASS — operator completed | Operator personally completed the Panta Terms / credential gate before authenticated API use. |
 | Panta credential handling | PASS so far | `PANTA_API_KEY` is stored as a Vercel Production secret and is not present in the repository/workspace. Re-scan before final submit. |
-| Panta environment labeling | **FIX IN PROGRESS** | Current production says `PANTA LIVE`, which overstates a `pk_test_` sandbox response. Branch changes label it `Panta test API` and add `environment: test`; deploy and verify before video/submission. |
+| Panta environment labeling | PASS | Production now returns `environment: test`, shows **PANTA TEST API**, and displays `Authenticated Panta test API — sandbox market data, not mainnet.` |
 | Panta Sidetrack working demo | BLOCKED | Authenticated API plumbing works, but the final verified demo video is still missing. |
 | Colosseum project details | **BLOCKED** | Exactly one required field remains: team Telegram contact. |
 | Colosseum media | **BLOCKED** | Exactly two required fields remain: demo video and pitch video. |
@@ -198,7 +198,7 @@ A valid demo must:
 
 1. show the live production product, not slides;
 2. show GitHub telemetry loading successfully;
-3. show **live** Panta data after M1 is enabled;
+3. show the authenticated Panta API environment accurately — currently **test/sandbox**, not mainnet;
 4. show clear **Powered by Panta** attribution;
 5. avoid exposing API keys, auth tokens, browser profiles, wallet secrets, or personal notifications;
 6. stay <= 3 minutes;
@@ -216,12 +216,10 @@ Pitch video must:
 
 1. Keep final submission blocked.
 2. Obtain operator-confirmed Telegram + founder personal fields.
-3. Operator personally accepts Panta API Terms / account-credential gate.
-4. Implement and deploy M1 live Panta reads.
-5. Re-run lint/type/build/security checks and clean-session production smoke.
-6. Re-audit every product/form claim so all references change from demo to live only where verified.
-7. Record and visually verify a new demo video.
-8. Produce/review pitch video.
-9. Resolve Superteam Vietnam live-pitch language/attendance constraint before entering that sidetrack.
-10. Run final PRE-SUBMIT audit.
-11. Only after all required rows are PASS may the operator proceed to final human-only submissions.
+3. Record and visually verify a new demo video from the verified production build.
+4. Produce/review the separate pitch video.
+5. Re-audit all form/video/README claims so Panta is described as authenticated **test/sandbox API** unless a production key is later used.
+6. Resolve Superteam Vietnam live-pitch language/attendance constraint before entering that sidetrack.
+7. Re-run security scan, clean-session production smoke, and final link checks after media/upload changes.
+8. Run final PRE-SUBMIT audit.
+9. Only after all required rows are PASS may the operator proceed to final human-only submissions.
