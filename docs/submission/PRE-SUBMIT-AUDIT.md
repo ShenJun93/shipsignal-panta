@@ -11,8 +11,8 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 ## Canonical product state
 
 - Workspace: `E:\Projects\BH-0005-shipsignal-panta`
-- Working branch: `work/shipsignal-presubmit-refresh-v1`
-- Canonical remote `main`: `9652a475a79a09442ef54320caf51e00ca0a1cf7`
+- Audited product-code baseline: `9652a475a79a09442ef54320caf51e00ca0a1cf7`
+- Docs-only audit refreshes may advance `main`; current remote HEAD must be read from Git rather than inferred from this document
 - Production: https://shipsignal-panta.vercel.app
 - GitHub: https://github.com/ShenJun93/shipsignal-panta
 - Colosseum project ID: `15220`
