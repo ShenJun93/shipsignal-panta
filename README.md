@@ -12,9 +12,10 @@ The first real repository signal is the Mermail access-review PR:
 
 - https://github.com/Nudgen-Marketing/mermail-skills/pull/375
 - GitHub data is fetched live through ShipSignal's server route.
-- Panta data remains explicitly labeled **Demo data** until the operator personally accepts Panta's API terms and configures a server-side API key.
+- Production is connected to Panta through an authenticated **test API** key and currently returns Panta's official sandbox market.
+- The UI explicitly labels this as **PANTA TEST API** and **sandbox market data, not mainnet**.
 
-ShipSignal never represents fixture data as live market information.
+ShipSignal never represents fixture, test, or sandbox data as mainnet production market information.
 
 ## Local development
 
@@ -69,12 +70,12 @@ Returns public PR telemetry plus an evidence-backed heuristic delivery score.
 GET /api/markets?status=primary&limit=12
 ```
 
-Without `PANTA_API_KEY`, this returns clearly marked demo fixtures. With a configured key, it uses the live Panta market catalog.
+Without `PANTA_API_KEY`, this returns clearly marked demo fixtures. With a configured key, it calls the authenticated Panta API and reports the detected environment (`test` or `production`) explicitly. The current production deployment uses a Panta test key and sandbox data.
 
 ## Product roadmap
 
-1. **M0 — Product shell:** dashboard, explicit live/demo labeling, GitHub signal, Panta adapter.
-2. **M1 — Live Panta reads:** authorized Panta market list/detail integration.
+1. **M0 — Product shell:** dashboard, explicit data-environment labeling, GitHub signal, Panta adapter.
+2. **M1 — Authenticated Panta reads:** authorized Panta market list/detail integration with test/production labeling.
 3. **M2 — Transaction intents:** market creation, buy, positions and claims with user-wallet signing.
 4. **M3 — Agent surface:** machine-readable decision endpoint / agent workflow.
 5. **M4 — Demo + traction:** deployed product and real usage.
