@@ -6,9 +6,17 @@ Last updated: 2026-09-30
 
 **M0 — PRODUCT SHELL: PASS / PUBLISHED / DEPLOYED**
 
+**M1 — AUTHENTICATED PANTA READS: PASS IN TEST ENVIRONMENT**
+
+**PRE-SUBMIT: NO-GO**
+
 Workspace:
 
 `E:\Projects\BH-0005-shipsignal-panta`
+
+Working branch:
+
+`work/shipsignal-presubmit-v1`
 
 Production:
 
@@ -18,132 +26,159 @@ GitHub:
 
 https://github.com/ShenJun93/shipsignal-panta
 
-PR #1:
-
-https://github.com/ShenJun93/shipsignal-panta/pull/1 — **MERGED**
-
 Canonical remote `main`:
 
-`9212d7d1e70f08c02e134478e850569e3991c852`
+`3fbfe9ce70fcbb5ef7131aa4ff27601f52a2345a`
 
 ## Implemented
 
 - Next.js 16 App Router application.
-- Polished ShipSignal dashboard.
-- Server-side Panta adapter with explicit live/demo modes.
-- Demo fixtures only when `PANTA_API_KEY` is absent.
-- Public GitHub pull-request telemetry adapter.
+- Public GitHub pull-request telemetry.
+- Panta API adapter with demo/test/production awareness.
+- Authenticated Panta API reads using a server-side Vercel secret.
 - Evidence-backed delivery score.
 - Combined repository-vs-market disagreement signal.
-- Required exact attribution: **Powered by Panta**.
+- Exact **Powered by Panta** attribution.
 - Server routes:
   - `GET /api/github-pr`
   - `GET /api/markets`
 
 ## Verification
 
-### Static checks
+### Static checks — current pre-submit branch
 
 - `npm run lint` — PASS.
 - `npx tsc --noEmit` — PASS.
+- `git diff --check` — PASS.
+- Local `next build` remains unreliable on this Windows host due the existing Application Control / SWC environment; use Vercel production build as the deployment build gate.
 
-### Local production build
+### Vercel production
 
-- `npm run build` uses `next build --webpack`.
-- Development machine warns that Windows Application Control blocks native `@next/swc-win32-x64-msvc`; Next.js falls back to WASM.
-- A later detached local build exited after successful compile/type/static-generation stages.
-
-### Vercel production build
-
-- Vercel project: `shipsignal-panta`.
-- GitHub repository connected: `ShenJun93/shipsignal-panta`.
-- Initial production build: PASS.
-- Canonical Git deployment from remote `main` SHA `9212d7d1e70f08c02e134478e850569e3991c852`: **READY**.
-- Canonical deployment ID: `dpl_CcDYMhMP5URDRrZDHt412Uq1726b`.
+- Project: `shipsignal-panta`.
+- Current production Git SHA: `3fbfe9ce70fcbb5ef7131aa4ff27601f52a2345a`.
+- Secret `PANTA_API_KEY` exists in the **Production** environment.
+- Redeploy after secret installation: **READY**.
+- Deployment ID: `dpl_6JRr67sZqUxxLv2U9GrgCujTrqPb`.
 - Production alias: https://shipsignal-panta.vercel.app
-- Routes:
-  - `/`
-  - `/api/github-pr`
-  - `/api/markets`
+- Vercel runtime errors in the checked one-hour window: none.
 
-### Production smoke
+### Production smoke — 2026-09-30
 
-WAG BrowserPort opened the production alias and verified:
+- Homepage: HTTP 200.
+- `/api/github-pr` against real Mermail PR #375: PASS.
+- GitHub signal:
+  - state: open
+  - draft: false
+  - mergeable: true
+  - deliveryScore: 80
+- `/api/markets`: **authenticated Panta API response**.
+- Current Panta credential is a `pk_test_` key.
+- Returned market: `Sandbox test market`.
+- Panta response explicitly says this fixture is **not on mainnet**.
+- Clean BrowserPort test loaded:
+  - GitHub live telemetry
+  - Panta sandbox market at 50% YES
+  - combined signal: repo 80%, crowd 50%, gap 30pt
+  - **Powered by Panta** attribution
 
-- page title: `ShipSignal — Engineering delivery intelligence`
-- **Powered by Panta** attribution visible
-- **GITHUB LIVE** label visible
-- **DEMO DATA** label visible for Panta while no API key is configured
-- production Analyze PR action completed successfully
+Important accuracy fix:
 
-Real PR #375 result:
+Current deployed M0 UI still shows the generic badge `PANTA LIVE`. Because the active credential is a Panta test key and the returned market is sandbox data, the pre-submit branch changes this to **Panta test API** and returns an explicit `environment: test` field plus the notice:
 
-- repository: `Nudgen-Marketing/mermail-skills`
-- PR: #375
-- state: open
-- draft: false
-- Ready for review: yes
-- mergeable: true
-- deliveryScore: 80
-- selected demo Panta YES probability: 64%
-- disagreement: 16 points
-- UI interpretation: moderate disagreement
+`Authenticated Panta test API — sandbox market data, not mainnet.`
 
-## Publication
+This fix must be deployed before any final video or submission.
 
-Local implementation commits:
+## Security / workspace hygiene
 
-- `e81eefa5aaffe557852901378438e5a711ea128a` — M0 product shell
-- `8ea4dc28238927823b39ceb0a93a573226e39a86` — deployment receipt/docs
+- Panta credential is stored in Vercel, not in the repository.
+- No credential was pasted into chat.
+- Prior secret-pattern scan found no API token/private-key patterns in the workspace.
+- Temporary browser profiles and invalid black-screen demo captures were removed.
+- Project graphic:
+  - `docs/submission/shipsignal-project-graphic.png`
 
-WAG `git.push` attempted the feature-branch publication but the runtime returned:
+Re-run secret scanning after the final code/deployment update.
 
-`AUTONOMOUS_REMOTE_POLICY_DENIED`
+## Colosseum
 
-Remote publication therefore used the connected GitHub integration without weakening WAG's local remote policy.
+**REGISTRATION: COMPLETE / PROJECT DRAFT ACTIVE**
 
-Remote feature branch final head before merge:
+Current project:
 
-`d1d5135a3f485d8680f51d5ba161ddb7f8974bb0`
+- Name: `ShipSignal`
+- Project ID: `15220`
+- Category: `Developer Infrastructure`
+- Chain: `Solana`
+- Team base: `Vietnam`
+- Website: https://shipsignal-panta.vercel.app
+- GitHub: https://github.com/ShenJun93/shipsignal-panta
 
-PR #1 was squash-merged to `main`.
+Remaining portal blockers:
 
-Canonical remote `main` after merge:
+- Project details: **1 required field** — team Telegram contact.
+- Media and code: **2 required fields** — demo video and pitch video.
+- Team: **0 of 1 complete** — personal required fields still need operator-confirmed values.
 
-`9212d7d1e70f08c02e134478e850569e3991c852`
+Do not click final submission yet.
 
-## External gates
+## Panta
 
-### Colosseum
+**LEGAL GATE: COMPLETED BY OPERATOR**
 
-WAG is currently on the local Colosseum Crypto World's Fair signup page.
+Canonical Terms:
 
-**STOP: HUMAN LEGAL GATE**
+https://docs.panta.market/guides/terms-of-use
 
-The page explicitly states: creating the account means agreeing to the Colosseum Terms of Service and Privacy Policy. The assistant did not click **Create account**, **Continue with Google**, or **Continue with GitHub**.
+The operator personally completed the Panta Terms / credential gate before authenticated API use.
 
-The operator must personally complete account creation/sign-in and any country/eligibility declarations.
+Current state:
 
-### Panta
+- `PANTA_API_KEY` is stored as a Vercel Production secret.
+- Authenticated Panta API access works.
+- Current key is `pk_test_`, therefore the returned market is test/sandbox data, not mainnet.
+- No trade was executed.
+- No market was created.
+- No wallet transaction was signed.
 
-**STOP: HUMAN LEGAL GATE**
+Panta Sidetrack requires meaningful Panta API integration plus a working demonstration. The integration is now real/authenticated, but final submission stays blocked until:
 
-Panta API terms state that obtaining credentials or using authenticated API routes constitutes agreement to the API Terms. No Panta credential has been created by the assistant and no authenticated Panta endpoint has been called.
+1. accurate test-environment labeling is deployed;
+2. a verified working demo video is produced;
+3. the submission accurately describes the sandbox/test environment unless a production key is later used.
 
-Until the operator personally accepts this gate:
+## Superteam Vietnam
 
-- keep `PANTA_API_KEY` empty;
-- use demo fixtures only;
-- do not execute trades;
-- do not create markets;
-- do not sign wallet transactions.
+Canonical listing re-audited on 2026-09-30.
+
+Observed requirements:
+
+- Colosseum eligibility.
+- Submit on both Colosseum and Superteam Earn.
+- Colosseum base country `Vietnam`.
+- Google Form + Telegram group.
+- Demo Day: **October 4, 2026**.
+- Online pitch accepted for teams unable to travel.
+- Listing metadata is `HUMAN_ONLY`.
+
+The accepted live-pitch language is still unresolved. Do not commit to this sidetrack until that is confirmed because the operator does not want a spoken-English workflow.
+
+## Final audit
+
+Source of truth:
+
+`docs/submission/PRE-SUBMIT-AUDIT.md`
+
+Final submission remains blocked.
 
 ## Next
 
-1. Operator completes Colosseum account / eligibility / terms gate in the WAG-local browser.
-2. Operator completes Panta API terms / credential gate.
-3. Move to M1 live Panta read integration.
-4. Implement M2 transaction intents.
-5. Implement M3 agent surface.
-6. Produce M4 demo/traction artifacts.
-7. Complete M5 Colosseum + eligible sidetrack submissions.
+1. Commit/publish the accurate `Panta test API` environment-label fix.
+2. Deploy and verify production again.
+3. Re-run secret scan and clean-session smoke.
+4. Obtain operator-confirmed Telegram + founder personal fields.
+5. Record and visually inspect a new real product demo.
+6. Produce/review the separate pitch video.
+7. Resolve Superteam Vietnam live-pitch language/attendance constraint.
+8. Run the final PRE-SUBMIT audit.
+9. Submit only when every required gate is PASS.

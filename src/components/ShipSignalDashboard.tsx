@@ -293,7 +293,13 @@ export default function ShipSignalDashboard() {
                     : "border-amber-300/20 bg-amber-300/[0.06] text-amber-200"
                 }`}
               >
-                {loadingMarkets ? "Loading" : feed?.mode === "live" ? "Panta live" : "Demo data"}
+                {loadingMarkets
+                  ? "Loading"
+                  : feed?.mode !== "live"
+                    ? "Demo data"
+                    : feed.environment === "test"
+                      ? "Panta test API"
+                      : "Panta live"}
               </span>
             </div>
 

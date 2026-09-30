@@ -68,6 +68,7 @@ export async function getMarketFeed(options?: {
   if (!apiKey()) {
     return {
       mode: "demo",
+      environment: "demo",
       source: "panta",
       fetchedAt: new Date().toISOString(),
       items: DEMO_MARKETS,
@@ -84,13 +85,19 @@ export async function getMarketFeed(options?: {
   const data = await pantaFetch<{ items: PantaMarket[]; nextCursor?: string | null }>(
     `/markets/?${params.toString()}`,
   );
+  const environment = apiKey().startsWith("pk_test_") ? "test" : "production";
 
   return {
     mode: "live",
+    environment,
     source: "panta",
     fetchedAt: new Date().toISOString(),
     items: data.items || [],
     nextCursor: data.nextCursor || null,
+    notice:
+      environment === "test"
+        ? "Authenticated Panta test API — sandbox market data, not mainnet."
+        : undefined,
   };
 }
 
