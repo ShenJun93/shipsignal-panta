@@ -4,7 +4,9 @@ Prediction intelligence for software delivery.
 
 ShipSignal combines public GitHub delivery telemetry with prediction-market probability from [Panta](https://panta.market) to surface disagreement between **observable execution evidence** and **crowd belief**.
 
-## Current demo
+## Production demo
+
+https://shipsignal-panta.vercel.app
 
 The first real repository signal is the Mermail access-review PR:
 
