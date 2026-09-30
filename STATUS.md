@@ -18,9 +18,13 @@ GitHub:
 
 https://github.com/ShenJun93/shipsignal-panta
 
-PR:
+PR #1:
 
-https://github.com/ShenJun93/shipsignal-panta/pull/1
+https://github.com/ShenJun93/shipsignal-panta/pull/1 — **MERGED**
+
+Canonical remote `main`:
+
+`9212d7d1e70f08c02e134478e850569e3991c852`
 
 ## Implemented
 
@@ -53,13 +57,14 @@ https://github.com/ShenJun93/shipsignal-panta/pull/1
 
 - Vercel project: `shipsignal-panta`.
 - GitHub repository connected: `ShenJun93/shipsignal-panta`.
-- Production build: PASS.
-- Next.js build completed in Vercel in 30s.
+- Initial production build: PASS.
+- Canonical Git deployment from remote `main` SHA `9212d7d1e70f08c02e134478e850569e3991c852`: **READY**.
+- Canonical deployment ID: `dpl_CcDYMhMP5URDRrZDHt412Uq1726b`.
+- Production alias: https://shipsignal-panta.vercel.app
 - Routes:
   - `/`
   - `/api/github-pr`
   - `/api/markets`
-- Production alias: https://shipsignal-panta.vercel.app
 
 ### Production smoke
 
@@ -86,9 +91,10 @@ Real PR #375 result:
 
 ## Publication
 
-Local M0 commit:
+Local implementation commits:
 
-`e81eefa5aaffe557852901378438e5a711ea128a`
+- `e81eefa5aaffe557852901378438e5a711ea128a` — M0 product shell
+- `8ea4dc28238927823b39ceb0a93a573226e39a86` — deployment receipt/docs
 
 WAG `git.push` attempted the feature-branch publication but the runtime returned:
 
@@ -96,19 +102,27 @@ WAG `git.push` attempted the feature-branch publication but the runtime returned
 
 Remote publication therefore used the connected GitHub integration without weakening WAG's local remote policy.
 
-Remote feature-branch head:
+Remote feature branch final head before merge:
 
-`1076ff447cb6f202fcd04e8f02e894781a1426f6`
+`d1d5135a3f485d8680f51d5ba161ddb7f8974bb0`
 
-PR #1 is open against `main`.
+PR #1 was squash-merged to `main`.
+
+Canonical remote `main` after merge:
+
+`9212d7d1e70f08c02e134478e850569e3991c852`
 
 ## External gates
 
 ### Colosseum
 
+WAG is currently on the local Colosseum Crypto World's Fair signup page.
+
 **STOP: HUMAN LEGAL GATE**
 
-Creating/joining the Colosseum account/hackathon requires the operator to personally accept the applicable Terms/Privacy and any eligibility declarations. The assistant does not perform that attestation.
+The page explicitly states: creating the account means agreeing to the Colosseum Terms of Service and Privacy Policy. The assistant did not click **Create account**, **Continue with Google**, or **Continue with GitHub**.
+
+The operator must personally complete account creation/sign-in and any country/eligibility declarations.
 
 ### Panta
 
@@ -126,8 +140,10 @@ Until the operator personally accepts this gate:
 
 ## Next
 
-1. Merge/publish M0 to `main`.
-2. Operator completes Colosseum account / eligibility / terms gate.
-3. Operator completes Panta API terms / credential gate.
-4. Move to M1 live Panta read integration.
-5. Then implement M2 transaction intents, M3 agent surface, M4 demo/traction, and M5 submissions.
+1. Operator completes Colosseum account / eligibility / terms gate in the WAG-local browser.
+2. Operator completes Panta API terms / credential gate.
+3. Move to M1 live Panta read integration.
+4. Implement M2 transaction intents.
+5. Implement M3 agent surface.
+6. Produce M4 demo/traction artifacts.
+7. Complete M5 Colosseum + eligible sidetrack submissions.
