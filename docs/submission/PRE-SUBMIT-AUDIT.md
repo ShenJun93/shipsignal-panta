@@ -40,7 +40,7 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | Colosseum founder/team profile | **BLOCKED** | Team shows `0 of 1 complete`; personal required fields still need operator-confirmed values. |
 | Project graphic | PASS | `docs/submission/shipsignal-project-graphic.png` uploaded to Colosseum. |
 | Demo video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | New captioned candidate is 60.0s, 1920x1080 H.264, video-only. Multiple timestamps were visually inspected and render the real production product; deleted black-screen captures are not reused. |
-| Pitch video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | `pitch-candidate-01.mp4` is 94.07s, 1920x1080 H.264 with AAC audio and accurate captions. Frames at 0/30/60/90s were visually inspected; no fabricated traction or partnership claim was found. |
+| Pitch video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | Official Colosseum FAQ rechecked 2026-10-01 requires a **2–3 minute presentation video**. `pitch-candidate-02.mp4` is 136.776s (2:16.8), 1920x1080 H.264 + AAC with burned captions; frames at 0/30/60/90/120/136s were visually inspected. `pitch-candidate-01.mp4` (94.07s) is superseded because it is shorter than the current public requirement. |
 | Git history / hackathon-window evidence | PASS so far | ShipSignal repository and implementation commits are dated during the current hackathon period. Re-check before final submit. |
 | Secret scan | PASS as of 2026-10-01 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material; only `.env.example` is tracked among `.env*` files. |
 | Local browser-profile hygiene | PASS | Temporary `.edge-demo*` profiles removed and ignored. |
@@ -75,7 +75,7 @@ Media audit:
 - X profile: present
 - Live product link: currently blank; portal labels this optional, but fill it with production before final review
 - Demo video: local 60.0s captioned candidate verified; portal field still unfilled/unuploaded
-- Pitch video: local 94.07s audio/captioned candidate verified; portal field still unfilled/unuploaded
+- Pitch video: local 136.776s (2:16.8) audio/captioned candidate verified against the current public 2–3 minute rule; portal field still unfilled/unuploaded
 
 ## Founder submission-profile audit
 
@@ -204,13 +204,15 @@ A valid demo must:
 6. stay <= 3 minutes;
 7. be visually inspected at multiple timestamps before upload.
 
-Pitch video must:
+Pitch / presentation video must:
 
-1. be separate from the demo;
-2. stay <= 2 minutes;
+1. be separate from the product-demo video;
+2. stay within **2–3 minutes** per the current official Colosseum public FAQ verified on 2026-10-01;
 3. explain problem, target user, product, why Panta/Solana matter, current proof, and why this founder can execute;
 4. make no fabricated traction or partnership claims;
-5. be reviewed against Colosseum and Vietnam-track requirements before upload.
+5. be reviewed against the authenticated portal and Vietnam-track requirements before upload.
+
+The same FAQ states the product-demo video must be **no more than 3 minutes**.
 
 ## Next execution order
 
