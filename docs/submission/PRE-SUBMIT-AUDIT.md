@@ -34,13 +34,13 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | Panta API legal gate | PASS — operator completed | Operator personally completed the Panta Terms / credential gate before authenticated API use. |
 | Panta credential handling | PASS so far | `PANTA_API_KEY` is stored as a Vercel Production secret and is not present in the repository/workspace. Re-scan before final submit. |
 | Panta environment labeling | PASS | Production now returns `environment: test`, shows **PANTA TEST API**, and displays `Authenticated Panta test API — sandbox market data, not mainnet.` |
-| Panta Sidetrack working demo | BLOCKED | Authenticated API plumbing works, but the final verified demo video is still missing. |
+| Panta Sidetrack working demo | **LOCAL CANDIDATE VERIFIED / PORTAL BLOCKED** | `demo-candidate-03-captioned.mp4` is a 60.0s 1920x1080 H.264 product demo. Multiple frames at 0/15/30/45/59s were visually inspected on 2026-10-01 and were not black. Captions accurately label Panta TEST/sandbox/not-mainnet. It has no audio stream and is not uploaded yet. |
 | Colosseum project details | **BLOCKED** | Exactly one required field remains: team Telegram contact. |
-| Colosseum media | **BLOCKED** | Exactly two required fields remain: demo video and pitch video. |
+| Colosseum media | **BLOCKED** | Local demo and pitch candidates now exist and were visually inspected, but the required portal media fields are still unfilled/unuploaded. |
 | Colosseum founder/team profile | **BLOCKED** | Team shows `0 of 1 complete`; personal required fields still need operator-confirmed values. |
 | Project graphic | PASS | `docs/submission/shipsignal-project-graphic.png` uploaded to Colosseum. |
-| Demo video | **FAIL / BLOCKER** | First capture was black; invalid captures were deleted. A new verified recording is required. |
-| Pitch video | **BLOCKED** | Separate public pitch video required, portal limit <= 2 minutes. |
+| Demo video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | New captioned candidate is 60.0s, 1920x1080 H.264, video-only. Multiple timestamps were visually inspected and render the real production product; deleted black-screen captures are not reused. |
+| Pitch video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | `pitch-candidate-01.mp4` is 94.07s, 1920x1080 H.264 with AAC audio and accurate captions. Frames at 0/30/60/90s were visually inspected; no fabricated traction or partnership claim was found. |
 | Git history / hackathon-window evidence | PASS so far | ShipSignal repository and implementation commits are dated during the current hackathon period. Re-check before final submit. |
 | Secret scan | PASS as of 2026-10-01 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material; only `.env.example` is tracked among `.env*` files. |
 | Local browser-profile hygiene | PASS | Temporary `.edge-demo*` profiles removed and ignored. |
@@ -74,8 +74,8 @@ Media audit:
 - Project graphic: present
 - X profile: present
 - Live product link: currently blank; portal labels this optional, but fill it with production before final review
-- Demo video: required and missing
-- Pitch video: required and missing
+- Demo video: local 60.0s captioned candidate verified; portal field still unfilled/unuploaded
+- Pitch video: local 94.07s audio/captioned candidate verified; portal field still unfilled/unuploaded
 
 ## Founder submission-profile audit
 
@@ -122,7 +122,7 @@ Observed 2026-09-30:
 
 Current ShipSignal status against this listing:
 
-**DO NOT SUBMIT YET.** ShipSignal now authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market. This proves real Panta API integration, and the production response/UI now explicitly label the environment as **test/sandbox, not mainnet**. Final sidetrack eligibility remains blocked until the demo is re-recorded and the submission language consistently describes this as Panta test/sandbox API data unless a production key is later used.
+**DO NOT SUBMIT YET.** ShipSignal now authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market. This proves real Panta API integration, and the production response/UI explicitly label the environment as **test/sandbox, not mainnet**. A 60-second local demo candidate has now been visually verified, but sidetrack submission remains blocked until media is uploaded through an authenticated human-controlled portal flow and all submission copy is re-audited.
 
 ## Panta Terms audit
 
@@ -215,11 +215,11 @@ Pitch video must:
 ## Next execution order
 
 1. Keep final submission blocked.
-2. Obtain operator-confirmed Telegram + founder personal fields.
-3. Record and visually verify a new demo video from the verified production build.
-4. Produce/review the separate pitch video.
+2. Restore an operator-authenticated Colosseum session; do not use TinyFish for login/auth.
+3. Re-open project details and correct any stale Panta demo/credentials-pending wording; fill only operator-confirmed Telegram/profile fields.
+4. Confirm the portal media mechanism and upload the already-verified demo/pitch candidates only after authenticated review; do not submit.
 5. Re-audit all form/video/README claims so Panta is described as authenticated **test/sandbox API** unless a production key is later used.
 6. Resolve Superteam Vietnam live-pitch language/attendance constraint before entering that sidetrack.
-7. Re-run security scan, clean-session production smoke, and final link checks after media/upload changes.
+7. Re-run security scan, clean-session production smoke, and final link checks after portal/media changes.
 8. Run final PRE-SUBMIT audit.
 9. Only after all required rows are PASS may the operator proceed to final human-only submissions.
