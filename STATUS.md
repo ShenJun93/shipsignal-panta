@@ -110,7 +110,7 @@ Remaining portal blockers:
 - Project details: **team Telegram contact** only; stale Panta wording was corrected and persisted in the authenticated portal.
 - Media: **PASS** — authenticated portal shows `Media and code Complete`; demo and pitch URLs are persisted.
 - Team: **0 of 1 complete** — operator-confirmed Gender, school status, educational background, and intended full-name value are still needed.
-- Judge-access audit: canonical GitHub repository is currently **private**, so a logged-out clean session returns GitHub 404. Do not change visibility without explicit operator approval.
+- Judge-access audit: canonical GitHub repository is now **public**; logged-out clean WAG session opens the repository and README successfully.
 
 Do not submit yet.
 
@@ -120,10 +120,10 @@ Authenticated Panta API integration now works through the official test environm
 
 Final submission remains blocked until:
 
-1. the GitHub visibility/judge-access blocker is resolved;
+1. final public-link/judge-access recheck remains PASS — revalidated 2026-10-02;
 2. all claims consistently describe Panta as **test/sandbox API** unless a production key is later used;
 3. remaining Colosseum profile/contact fields are completed;
-4. the final clean-session and PRE-SUBMIT audit pass.
+4. the final PRE-SUBMIT audit is rerun after those personal fields are saved.
 
 ## Superteam Vietnam
 
@@ -149,7 +149,7 @@ Final submission stays **NO-GO** until every required gate is PASS.
 
 ## Verified local media candidates
 
-- Demo: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\demo-candidate-03-captioned.mp4` — 60.0s, 1920x1080 H.264, captioned, no audio stream; uploaded Unlisted to `https://www.youtube.com/watch?v=eL-SsnCKv2M`; clean-session accessible.
+- Demo primary: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\demo-candidate-03-captioned-audio-final.mp4` — 59.9s, 1920x1080 H.264 + AAC mono voiceover, captioned; local ffprobe + loudness check PASS; uploaded Unlisted to `https://www.youtube.com/watch?v=ojFtIuhCa3Y`; Colosseum points to this corrected audio version.
 - Pitch primary: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\pitch-candidate-01.mp4` — 94.07s, 1920x1080 H.264 + AAC audio, captioned; uploaded Unlisted to `https://www.youtube.com/watch?v=nrI4ky_LUL4`; clean-session accessible and within the portal's **Up to 2 minutes** limit.
 - Pitch backup: `pitch-candidate-02.mp4` — 136.776s (2:16.8), retained only as a longer backup and not used in the portal.
 - The current demo and primary pitch accurately describe Panta as authenticated TEST/sandbox data and do not claim mainnet, traction, or partnerships.
@@ -157,9 +157,9 @@ Final submission stays **NO-GO** until every required gate is PASS.
 
 ## Next
 
-1. Decide whether `ShenJun93/shipsignal-panta` may be changed from **private** to **public**; clean-session judge access currently returns GitHub 404.
-2. Obtain operator-confirmed Telegram contact + founder-profile values.
-3. Re-run clean-session judge access after the GitHub visibility decision.
+1. Obtain operator-confirmed Telegram contact + founder-profile values.
+2. Final clean-session judge access across production, public GitHub, corrected demo, and pitch — PASS on 2026-10-02.
+3. Keep final submission blocked until those personal/contact fields are complete.
 4. Re-audit all public/form/video claims.
 5. Resolve Superteam Vietnam pitch-language constraint.
 6. Run the final PRE-SUBMIT audit.
