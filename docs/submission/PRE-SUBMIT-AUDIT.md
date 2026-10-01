@@ -27,24 +27,24 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | --- | --- | --- |
 | Colosseum account + hackathon registration | PASS | Operator personally accepted the legal gate and registered. |
 | Colosseum project draft | PASS | Project ID `15220` exists and is editable. |
-| Production homepage | PASS | HTTP 200 and clean BrowserPort smoke on 2026-10-01. |
+| Production homepage | PASS | Clean WAG final-link smoke revalidated production on 2026-10-02. |
 | Live GitHub telemetry | PASS | Clean BrowserPort run on 2026-10-01 analyzed PR #375 successfully and showed delivery score 80. |
 | Panta attribution | PASS | Product visibly uses exact text **Powered by Panta**. |
 | Authenticated Panta API integration | PASS | Production `/api/markets` returns authenticated Panta API data. Current credential is a Panta **test** key and returns the official sandbox market, not mainnet data. |
 | Panta API legal gate | PASS — operator completed | Operator personally completed the Panta Terms / credential gate before authenticated API use. |
 | Panta credential handling | PASS so far | `PANTA_API_KEY` is stored as a Vercel Production secret and is not present in the repository/workspace. Re-scan before final submit. |
 | Panta environment labeling | PASS | Production now returns `environment: test`, shows **PANTA TEST API**, and displays `Authenticated Panta test API — sandbox market data, not mainnet.` |
-| Panta Sidetrack working demo | PASS | 60.0s production-product demo is uploaded Unlisted at `https://www.youtube.com/watch?v=eL-SsnCKv2M`, persisted in Colosseum, and reachable from a clean WAG session. Captions accurately label Panta TEST/sandbox/not-mainnet. |
+| Panta Sidetrack working demo | PASS | Corrected 59.9s production demo with AAC voiceover is uploaded Unlisted at `https://www.youtube.com/watch?v=ojFtIuhCa3Y` and persisted in Colosseum. Local ffprobe verifies H.264 + AAC audio; captions accurately label Panta TEST/sandbox/not-mainnet. |
 | Colosseum project details | **BLOCKED** | Exactly one required field remains: team Telegram contact. |
 | Colosseum media | PASS | Authenticated portal shows **Media and code Complete**. Demo and pitch URLs are persisted server-side and both YouTube links are reachable from a clean WAG session. |
 | Colosseum founder/team profile | **BLOCKED** | Team shows `0 of 1 complete`; personal required fields still need operator-confirmed values. |
 | Project graphic | PASS | `docs/submission/shipsignal-project-graphic.png` uploaded to Colosseum. |
-| Demo video | PASS | 60.0s verified product demo uploaded to YouTube as Unlisted: `https://www.youtube.com/watch?v=eL-SsnCKv2M`. Clean WAG session opens the video successfully. |
+| Demo video | PASS | Corrected 59.9s H.264 + AAC product demo uploaded to YouTube as Unlisted: `https://www.youtube.com/watch?v=ojFtIuhCa3Y`. The prior `eL-SsnCKv2M` upload was silent because its source file had no audio stream and is no longer used in Colosseum. |
 | Pitch video | PASS | Authenticated Colosseum portal requires **Up to 2 minutes**. The 94.07s primary candidate was uploaded to YouTube as Unlisted: `https://www.youtube.com/watch?v=nrI4ky_LUL4`. Clean WAG session opens the video successfully. The 136.776s v2 remains backup only. |
 | Git history / hackathon-window evidence | PASS so far | ShipSignal repository and implementation commits are dated during the current hackathon period. Re-check before final submit. |
-| Secret scan | PASS as of 2026-10-01 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material; only `.env.example` is tracked among `.env*` files. |
+| Secret scan | PASS as of 2026-10-02 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material. |
 | Local browser-profile hygiene | PASS | Temporary `.edge-demo*` profiles removed and ignored. |
-| Final clean-session judge test | **BLOCKED — GITHUB VISIBILITY** | Production, demo, and pitch all open in a clean WAG session. The canonical GitHub URL returns GitHub 404 when logged out because `ShenJun93/shipsignal-panta` is currently **private**. Do not make it public without explicit operator approval. |
+| Final clean-session judge test | PASS for technical/public links | On 2026-10-02 a fresh WAG session opened production, the public GitHub repo, corrected demo `ojFtIuhCa3Y`, and pitch `nrI4ky_LUL4` with no 404/private/unavailable blockers. Personal/contact form blockers remain separate. |
 | Final claim audit | PASS so far | Authenticated Colosseum project details use authenticated Panta test/sandbox wording, explicitly not mainnet. Demo and pitch URLs are now persisted. Re-check once more immediately before final submit. |
 
 ## Colosseum form audit
@@ -70,11 +70,11 @@ Missing required project field:
 
 Media audit:
 
-- GitHub repository: field is present, but the repository is currently **private**; logged-out clean session returns GitHub 404
+- GitHub repository: `https://github.com/ShenJun93/shipsignal-panta` — now **public**; logged-out clean WAG session opens repository + README
 - Project graphic: present
 - X profile: present
 - Live product link: present — `https://shipsignal-panta.vercel.app`
-- Demo video: persisted — `https://www.youtube.com/watch?v=eL-SsnCKv2M` — 60.0s, Unlisted, clean-session accessible
+- Demo video: persisted — `https://www.youtube.com/watch?v=ojFtIuhCa3Y` — corrected 59.9s H.264 + AAC voiceover build; prior silent URL is superseded
 - Pitch video: persisted — `https://www.youtube.com/watch?v=nrI4ky_LUL4` — 94.07s, Unlisted, clean-session accessible, within authenticated portal's **Up to 2 minutes** rule
 
 ## Founder submission-profile audit
@@ -122,7 +122,7 @@ Observed 2026-09-30:
 
 Current ShipSignal status against this listing:
 
-**DO NOT SUBMIT YET.** ShipSignal authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market with explicit **test/sandbox, not mainnet** labeling. Demo and pitch videos are now uploaded and persisted in Colosseum. Remaining blockers are the founder/contact fields, clean judge access to the currently private GitHub repository, and the final PRE-SUBMIT pass.
+**DO NOT SUBMIT YET.** ShipSignal authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market with explicit **test/sandbox, not mainnet** labeling. Corrected demo + pitch are uploaded and persisted, and the GitHub repository is public. Remaining blockers are the founder/contact fields and the final PRE-SUBMIT pass.
 
 ## Panta Terms audit
 
@@ -217,9 +217,9 @@ A public FAQ observed earlier said 2–3 minutes, which conflicts with the authe
 ## Next execution order
 
 1. Keep final submission blocked.
-2. Decide whether the canonical GitHub repository may be changed from **private** to **public**; clean-session judge access currently returns GitHub 404. Do not change visibility without explicit operator approval.
-3. Obtain operator-confirmed Telegram contact and founder-profile answers; do not infer personal values.
-4. Re-run clean-session judge access after the GitHub visibility decision.
+2. Obtain operator-confirmed Telegram contact and founder-profile answers; do not infer personal values.
+3. Re-run one final clean-session judge check across production, public GitHub, corrected demo, and pitch.
+4. Keep final submission blocked until the personal/contact fields are complete.
 5. Re-audit all form/video/README claims so Panta is described as authenticated **test/sandbox API**, not mainnet.
 6. Resolve Superteam Vietnam live-pitch language/attendance constraint before entering that sidetrack.
 7. Re-run security scan and production smoke.
