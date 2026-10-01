@@ -107,9 +107,10 @@ Project:
 
 Remaining portal blockers:
 
-- Project details: **team Telegram contact**.
-- Media: **demo video + pitch video**.
+- Project details: **team Telegram contact** plus stale Panta wording re-check.
+- Media: local demo + pitch candidates are verified, but portal media fields are still unfilled/unuploaded.
 - Team: **0 of 1 complete** — operator-confirmed personal fields still missing.
+- Colosseum WAG profiles checked on 2026-10-01 were logged out; an operator-authenticated session is required before portal edits.
 
 Do not submit yet.
 
@@ -119,9 +120,9 @@ Authenticated Panta API integration now works through the official test environm
 
 Final submission remains blocked until:
 
-1. a verified demo video is produced;
-2. the pitch video is reviewed;
-3. all claims consistently describe Panta as **test/sandbox API** unless a production key is later used;
+1. the verified local demo and pitch candidates are reviewed/uploaded through an authenticated portal flow;
+2. all claims consistently describe Panta as **test/sandbox API** unless a production key is later used;
+3. stale Colosseum project copy is corrected;
 4. remaining Colosseum profile/contact fields are completed.
 
 ## Superteam Vietnam
@@ -146,11 +147,18 @@ Canonical final gate:
 
 Final submission stays **NO-GO** until every required gate is PASS.
 
+## Verified local media candidates
+
+- Demo: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\demo-candidate-03-captioned.mp4` — 60.0s, 1920x1080 H.264, captioned, no audio stream; frames at 0/15/30/45/59s visually checked.
+- Pitch: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\pitch-candidate-01.mp4` — 94.07s, 1920x1080 H.264 + AAC audio, captioned; frames at 0/30/60/90s visually checked.
+- Both accurately describe Panta as authenticated TEST/sandbox data and do not claim mainnet, traction, or partnerships.
+- Neither has been uploaded or submitted.
+
 ## Next
 
-1. Obtain operator-confirmed Telegram + founder personal fields.
-2. Record and visually inspect a new real product demo.
-3. Produce/review the separate pitch video.
+1. Restore an operator-authenticated Colosseum session; do not use TinyFish for login/auth.
+2. Correct stale Colosseum Panta wording and complete only operator-confirmed contact/profile fields.
+3. Confirm portal media requirements and upload the verified candidates without final submission.
 4. Re-audit all public/form/video claims.
 5. Resolve Superteam Vietnam pitch-language constraint.
 6. Run the final PRE-SUBMIT audit.
