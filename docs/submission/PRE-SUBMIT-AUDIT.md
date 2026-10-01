@@ -1,6 +1,6 @@
 # ShipSignal — Pre-Submit Audit
 
-Last audited: 2026-10-01 (Asia/Ho_Chi_Minh)
+Last audited: 2026-10-02 (Asia/Ho_Chi_Minh)
 
 ## Decision
 
@@ -40,12 +40,12 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | Colosseum founder/team profile | **BLOCKED** | Team shows `0 of 1 complete`; personal required fields still need operator-confirmed values. |
 | Project graphic | PASS | `docs/submission/shipsignal-project-graphic.png` uploaded to Colosseum. |
 | Demo video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | New captioned candidate is 60.0s, 1920x1080 H.264, video-only. Multiple timestamps were visually inspected and render the real production product; deleted black-screen captures are not reused. |
-| Pitch video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | Official Colosseum FAQ rechecked 2026-10-01 requires a **2–3 minute presentation video**. `pitch-candidate-02.mp4` is 136.776s (2:16.8), 1920x1080 H.264 + AAC with burned captions; frames at 0/30/60/90/120/136s were visually inspected. `pitch-candidate-01.mp4` (94.07s) is superseded because it is shorter than the current public requirement. |
+| Pitch video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | Authenticated Colosseum submission portal rechecked 2026-10-02 says the required pitch video is **Up to 2 minutes**. `pitch-candidate-01.mp4` is 94.07s, 1920x1080 H.264 + AAC with burned captions and is the portal-compatible primary candidate. The public FAQ wording observed earlier conflicts with the authenticated form; for the actual submission field, follow the portal. `pitch-candidate-02.mp4` (136.776s) is retained only as a longer backup and must not be used in the <=2 minute portal field. |
 | Git history / hackathon-window evidence | PASS so far | ShipSignal repository and implementation commits are dated during the current hackathon period. Re-check before final submit. |
 | Secret scan | PASS as of 2026-10-01 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material; only `.env.example` is tracked among `.env*` files. |
 | Local browser-profile hygiene | PASS | Temporary `.edge-demo*` profiles removed and ignored. |
 | Final clean-session judge test | PENDING | Open every public link from a clean session after final deployment. |
-| Final claim audit | **PENDING / BLOCKER** | Re-open Colosseum project details and remove any stale 2026-09-30 wording that still says Panta demo / credentials pending; form/video/README must consistently say authenticated Panta test/sandbox API, not mainnet. |
+| Final claim audit | **PARTIAL PASS / MEDIA PENDING** | Authenticated Colosseum project details were corrected on 2026-10-01/02: stale demo/credentials-pending wording was replaced with authenticated Panta test/sandbox, explicitly not mainnet. Final media URLs and final review still need audit before submit. |
 
 ## Colosseum form audit
 
@@ -58,11 +58,11 @@ Current project-details values observed in the authenticated local Edge session:
 - Why now: present
 - Technology/AI disclosure: present
 - Solana: selected
-- Chain-use explanation: present, but the copy observed on 2026-09-30 still says M0 uses demo fixtures while live Panta credentials are pending — re-open and update if that stale wording is still present
+- Chain-use explanation: updated in the authenticated portal to state production reads authenticated Panta test/sandbox API data and that the current build does not create markets, execute trades, or sign wallet transactions
 - Category: `Developer Infrastructure`
 - Team base: `Vietnam`
 - Outside contributors disclosure: AI coding assistants disclosed; no unlisted human contributors claimed
-- Additional judge context: the copy observed on 2026-09-30 still distinguishes GitHub-live vs Panta-demo — re-open and update if that stale wording is still present
+- Additional judge context: updated in the authenticated portal to state GitHub telemetry is live and Panta is authenticated official test/sandbox data, explicitly not mainnet
 
 Missing required project field:
 
@@ -73,9 +73,9 @@ Media audit:
 - GitHub repository: present
 - Project graphic: present
 - X profile: present
-- Live product link: currently blank; portal labels this optional, but fill it with production before final review
+- Live product link: present — `https://shipsignal-panta.vercel.app`
 - Demo video: local 60.0s captioned candidate verified; portal field still unfilled/unuploaded
-- Pitch video: local 136.776s (2:16.8) audio/captioned candidate verified against the current public 2–3 minute rule; portal field still unfilled/unuploaded
+- Pitch video: local 94.07s audio/captioned candidate is the primary portal-compatible candidate; authenticated portal says **Up to 2 minutes**. The 136.776s v2 is backup only and is too long for this field.
 
 ## Founder submission-profile audit
 
@@ -207,20 +207,20 @@ A valid demo must:
 Pitch / presentation video must:
 
 1. be separate from the product-demo video;
-2. stay within **2–3 minutes** per the current official Colosseum public FAQ verified on 2026-10-01;
+2. be **no more than 2 minutes** for the actual authenticated Colosseum submission field, as verified on 2026-10-02;
 3. explain problem, target user, product, why Panta/Solana matter, current proof, and why this founder can execute;
 4. make no fabricated traction or partnership claims;
 5. be reviewed against the authenticated portal and Vietnam-track requirements before upload.
 
-The same FAQ states the product-demo video must be **no more than 3 minutes**.
+A public FAQ observed earlier said 2–3 minutes, which conflicts with the authenticated submission form. For the Colosseum portal field, the authenticated form is the controlling submission constraint. The product-demo field remains **up to 3 minutes**.
 
 ## Next execution order
 
 1. Keep final submission blocked.
-2. Restore an operator-authenticated Colosseum session; do not use TinyFish for login/auth.
-3. Re-open project details and correct any stale Panta demo/credentials-pending wording; fill only operator-confirmed Telegram/profile fields.
-4. Confirm the portal media mechanism and upload the already-verified demo/pitch candidates only after authenticated review; do not submit.
-5. Re-audit all form/video/README claims so Panta is described as authenticated **test/sandbox API** unless a production key is later used.
+2. Obtain operator-confirmed Telegram contact and founder-profile answers; do not infer personal values.
+3. Upload the verified demo and the 94.07s pitch candidate to an accepted public video host. WAG controls the browser; the native Windows file chooser may require one operator file-selection handoff because BrowserPort exposes no file-upload semantic action.
+4. Fill the resulting demo/pitch URLs in Colosseum and save draft; do not submit.
+5. Re-audit all form/video/README claims so Panta is described as authenticated **test/sandbox API**, not mainnet.
 6. Resolve Superteam Vietnam live-pitch language/attendance constraint before entering that sidetrack.
 7. Re-run security scan, clean-session production smoke, and final link checks after portal/media changes.
 8. Run final PRE-SUBMIT audit.
