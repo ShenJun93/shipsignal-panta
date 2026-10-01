@@ -150,8 +150,9 @@ Final submission stays **NO-GO** until every required gate is PASS.
 ## Verified local media candidates
 
 - Demo: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\demo-candidate-03-captioned.mp4` — 60.0s, 1920x1080 H.264, captioned, no audio stream; frames at 0/15/30/45/59s visually checked.
-- Pitch: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\pitch-candidate-01.mp4` — 94.07s, 1920x1080 H.264 + AAC audio, captioned; frames at 0/30/60/90s visually checked.
-- Both accurately describe Panta as authenticated TEST/sandbox data and do not claim mainnet, traction, or partnerships.
+- Pitch: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\pitch-candidate-02.mp4` — 136.776s (2:16.8), 1920x1080 H.264 + AAC audio, captioned; frames at 0/30/60/90/120/136s visually checked. This satisfies the official Colosseum public FAQ requirement of a 2–3 minute presentation video verified on 2026-10-01.
+- `pitch-candidate-01.mp4` (94.07s) is superseded because it is below the current 2-minute minimum.
+- Both current demo/pitch candidates accurately describe Panta as authenticated TEST/sandbox data and do not claim mainnet, traction, or partnerships.
 - Neither has been uploaded or submitted.
 
 ## Next
