@@ -108,9 +108,9 @@ Project:
 Remaining portal blockers:
 
 - Project details: **team Telegram contact** only; stale Panta wording was corrected and persisted in the authenticated portal.
-- Media: local demo + pitch candidates are verified, but portal media URL fields are still unfilled. The authenticated portal says pitch video is **Up to 2 minutes**.
+- Media: **PASS** — authenticated portal shows `Media and code Complete`; demo and pitch URLs are persisted.
 - Team: **0 of 1 complete** — operator-confirmed Gender, school status, educational background, and intended full-name value are still needed.
-- An operator-authenticated Colosseum WAG session is active and usable.
+- Judge-access audit: canonical GitHub repository is currently **private**, so a logged-out clean session returns GitHub 404. Do not change visibility without explicit operator approval.
 
 Do not submit yet.
 
@@ -120,7 +120,7 @@ Authenticated Panta API integration now works through the official test environm
 
 Final submission remains blocked until:
 
-1. the verified local demo and portal-compatible pitch candidate are uploaded to an accepted public video host and their URLs are saved in Colosseum;
+1. the GitHub visibility/judge-access blocker is resolved;
 2. all claims consistently describe Panta as **test/sandbox API** unless a production key is later used;
 3. remaining Colosseum profile/contact fields are completed;
 4. the final clean-session and PRE-SUBMIT audit pass.
@@ -149,17 +149,17 @@ Final submission stays **NO-GO** until every required gate is PASS.
 
 ## Verified local media candidates
 
-- Demo: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\demo-candidate-03-captioned.mp4` — 60.0s, 1920x1080 H.264, captioned, no audio stream; frames at 0/15/30/45/59s visually checked.
-- Pitch primary: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\pitch-candidate-01.mp4` — 94.07s, 1920x1080 H.264 + AAC audio, captioned; frames at 0/30/60/90s visually checked. The authenticated Colosseum portal says **Up to 2 minutes**, so this is the submission-compatible candidate.
-- Pitch backup: `pitch-candidate-02.mp4` — 136.776s (2:16.8), retained only as a longer backup because it exceeds the authenticated portal limit despite conflicting public FAQ wording.
-- The current demo and primary pitch candidates accurately describe Panta as authenticated TEST/sandbox data and do not claim mainnet, traction, or partnerships.
-- Neither has been uploaded or submitted.
+- Demo: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\demo-candidate-03-captioned.mp4` — 60.0s, 1920x1080 H.264, captioned, no audio stream; uploaded Unlisted to `https://www.youtube.com/watch?v=eL-SsnCKv2M`; clean-session accessible.
+- Pitch primary: `C:\Users\PACMAP\AppData\Local\WAG-Local\media-capture-pw\pitch-candidate-01.mp4` — 94.07s, 1920x1080 H.264 + AAC audio, captioned; uploaded Unlisted to `https://www.youtube.com/watch?v=nrI4ky_LUL4`; clean-session accessible and within the portal's **Up to 2 minutes** limit.
+- Pitch backup: `pitch-candidate-02.mp4` — 136.776s (2:16.8), retained only as a longer backup and not used in the portal.
+- The current demo and primary pitch accurately describe Panta as authenticated TEST/sandbox data and do not claim mainnet, traction, or partnerships.
+- Both media URLs are persisted in Colosseum; final submission has not been made.
 
 ## Next
 
-1. Obtain operator-confirmed Telegram contact + founder-profile values.
-2. Upload the verified 60s demo and 94.07s pitch to YouTube/Loom/Vimeo without final submission; WAG remains primary, with only the native file-picker selection handed to the operator if required.
-3. Save the two public video URLs in Colosseum and re-audit the draft.
+1. Decide whether `ShenJun93/shipsignal-panta` may be changed from **private** to **public**; clean-session judge access currently returns GitHub 404.
+2. Obtain operator-confirmed Telegram contact + founder-profile values.
+3. Re-run clean-session judge access after the GitHub visibility decision.
 4. Re-audit all public/form/video claims.
 5. Resolve Superteam Vietnam pitch-language constraint.
 6. Run the final PRE-SUBMIT audit.
