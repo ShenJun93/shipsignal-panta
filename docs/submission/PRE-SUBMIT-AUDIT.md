@@ -34,18 +34,18 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | Panta API legal gate | PASS — operator completed | Operator personally completed the Panta Terms / credential gate before authenticated API use. |
 | Panta credential handling | PASS so far | `PANTA_API_KEY` is stored as a Vercel Production secret and is not present in the repository/workspace. Re-scan before final submit. |
 | Panta environment labeling | PASS | Production now returns `environment: test`, shows **PANTA TEST API**, and displays `Authenticated Panta test API — sandbox market data, not mainnet.` |
-| Panta Sidetrack working demo | **LOCAL CANDIDATE VERIFIED / PORTAL BLOCKED** | `demo-candidate-03-captioned.mp4` is a 60.0s 1920x1080 H.264 product demo. Multiple frames at 0/15/30/45/59s were visually inspected on 2026-10-01 and were not black. Captions accurately label Panta TEST/sandbox/not-mainnet. It has no audio stream and is not uploaded yet. |
+| Panta Sidetrack working demo | PASS | 60.0s production-product demo is uploaded Unlisted at `https://www.youtube.com/watch?v=eL-SsnCKv2M`, persisted in Colosseum, and reachable from a clean WAG session. Captions accurately label Panta TEST/sandbox/not-mainnet. |
 | Colosseum project details | **BLOCKED** | Exactly one required field remains: team Telegram contact. |
-| Colosseum media | **BLOCKED** | Local demo and pitch candidates now exist and were visually inspected, but the required portal media fields are still unfilled/unuploaded. |
+| Colosseum media | PASS | Authenticated portal shows **Media and code Complete**. Demo and pitch URLs are persisted server-side and both YouTube links are reachable from a clean WAG session. |
 | Colosseum founder/team profile | **BLOCKED** | Team shows `0 of 1 complete`; personal required fields still need operator-confirmed values. |
 | Project graphic | PASS | `docs/submission/shipsignal-project-graphic.png` uploaded to Colosseum. |
-| Demo video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | New captioned candidate is 60.0s, 1920x1080 H.264, video-only. Multiple timestamps were visually inspected and render the real production product; deleted black-screen captures are not reused. |
-| Pitch video | **LOCAL CANDIDATE VERIFIED / UPLOAD BLOCKED** | Authenticated Colosseum submission portal rechecked 2026-10-02 says the required pitch video is **Up to 2 minutes**. `pitch-candidate-01.mp4` is 94.07s, 1920x1080 H.264 + AAC with burned captions and is the portal-compatible primary candidate. The public FAQ wording observed earlier conflicts with the authenticated form; for the actual submission field, follow the portal. `pitch-candidate-02.mp4` (136.776s) is retained only as a longer backup and must not be used in the <=2 minute portal field. |
+| Demo video | PASS | 60.0s verified product demo uploaded to YouTube as Unlisted: `https://www.youtube.com/watch?v=eL-SsnCKv2M`. Clean WAG session opens the video successfully. |
+| Pitch video | PASS | Authenticated Colosseum portal requires **Up to 2 minutes**. The 94.07s primary candidate was uploaded to YouTube as Unlisted: `https://www.youtube.com/watch?v=nrI4ky_LUL4`. Clean WAG session opens the video successfully. The 136.776s v2 remains backup only. |
 | Git history / hackathon-window evidence | PASS so far | ShipSignal repository and implementation commits are dated during the current hackathon period. Re-check before final submit. |
 | Secret scan | PASS as of 2026-10-01 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material; only `.env.example` is tracked among `.env*` files. |
 | Local browser-profile hygiene | PASS | Temporary `.edge-demo*` profiles removed and ignored. |
-| Final clean-session judge test | PENDING | Open every public link from a clean session after final deployment. |
-| Final claim audit | **PARTIAL PASS / MEDIA PENDING** | Authenticated Colosseum project details were corrected on 2026-10-01/02: stale demo/credentials-pending wording was replaced with authenticated Panta test/sandbox, explicitly not mainnet. Final media URLs and final review still need audit before submit. |
+| Final clean-session judge test | **BLOCKED — GITHUB VISIBILITY** | Production, demo, and pitch all open in a clean WAG session. The canonical GitHub URL returns GitHub 404 when logged out because `ShenJun93/shipsignal-panta` is currently **private**. Do not make it public without explicit operator approval. |
+| Final claim audit | PASS so far | Authenticated Colosseum project details use authenticated Panta test/sandbox wording, explicitly not mainnet. Demo and pitch URLs are now persisted. Re-check once more immediately before final submit. |
 
 ## Colosseum form audit
 
@@ -70,12 +70,12 @@ Missing required project field:
 
 Media audit:
 
-- GitHub repository: present
+- GitHub repository: field is present, but the repository is currently **private**; logged-out clean session returns GitHub 404
 - Project graphic: present
 - X profile: present
 - Live product link: present — `https://shipsignal-panta.vercel.app`
-- Demo video: local 60.0s captioned candidate verified; portal field still unfilled/unuploaded
-- Pitch video: local 94.07s audio/captioned candidate is the primary portal-compatible candidate; authenticated portal says **Up to 2 minutes**. The 136.776s v2 is backup only and is too long for this field.
+- Demo video: persisted — `https://www.youtube.com/watch?v=eL-SsnCKv2M` — 60.0s, Unlisted, clean-session accessible
+- Pitch video: persisted — `https://www.youtube.com/watch?v=nrI4ky_LUL4` — 94.07s, Unlisted, clean-session accessible, within authenticated portal's **Up to 2 minutes** rule
 
 ## Founder submission-profile audit
 
@@ -122,7 +122,7 @@ Observed 2026-09-30:
 
 Current ShipSignal status against this listing:
 
-**DO NOT SUBMIT YET.** ShipSignal now authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market. This proves real Panta API integration, and the production response/UI explicitly label the environment as **test/sandbox, not mainnet**. A 60-second local demo candidate has now been visually verified, but sidetrack submission remains blocked until media is uploaded through an authenticated human-controlled portal flow and all submission copy is re-audited.
+**DO NOT SUBMIT YET.** ShipSignal authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market with explicit **test/sandbox, not mainnet** labeling. Demo and pitch videos are now uploaded and persisted in Colosseum. Remaining blockers are the founder/contact fields, clean judge access to the currently private GitHub repository, and the final PRE-SUBMIT pass.
 
 ## Panta Terms audit
 
@@ -217,11 +217,11 @@ A public FAQ observed earlier said 2–3 minutes, which conflicts with the authe
 ## Next execution order
 
 1. Keep final submission blocked.
-2. Obtain operator-confirmed Telegram contact and founder-profile answers; do not infer personal values.
-3. Upload the verified demo and the 94.07s pitch candidate to an accepted public video host. WAG controls the browser; the native Windows file chooser may require one operator file-selection handoff because BrowserPort exposes no file-upload semantic action.
-4. Fill the resulting demo/pitch URLs in Colosseum and save draft; do not submit.
+2. Decide whether the canonical GitHub repository may be changed from **private** to **public**; clean-session judge access currently returns GitHub 404. Do not change visibility without explicit operator approval.
+3. Obtain operator-confirmed Telegram contact and founder-profile answers; do not infer personal values.
+4. Re-run clean-session judge access after the GitHub visibility decision.
 5. Re-audit all form/video/README claims so Panta is described as authenticated **test/sandbox API**, not mainnet.
 6. Resolve Superteam Vietnam live-pitch language/attendance constraint before entering that sidetrack.
-7. Re-run security scan, clean-session production smoke, and final link checks after portal/media changes.
+7. Re-run security scan and production smoke.
 8. Run final PRE-SUBMIT audit.
 9. Only after all required rows are PASS may the operator proceed to final human-only submissions.
