@@ -6,7 +6,7 @@ Last updated: 2026-10-02
 
 - **M0 — PRODUCT SHELL: PASS / PUBLISHED / DEPLOYED**
 - **M1 — AUTHENTICATED PANTA READS: PASS IN TEST ENVIRONMENT**
-- **PRE-SUBMIT: NO-GO**
+- **PRE-SUBMIT: PASS / READY — WAITING FOR SUBMISSION WINDOW**
 
 Workspace:
 
@@ -105,25 +105,28 @@ Project:
 - Chain: `Solana`
 - Team base: `Vietnam`
 
-Remaining portal blockers:
+Colosseum portal readiness:
 
-- Project details: **team Telegram contact** only; stale Panta wording was corrected and persisted in the authenticated portal.
-- Media: **PASS** — authenticated portal shows `Media and code Complete`; demo and pitch URLs are persisted.
-- Team: **0 of 1 complete** — operator-confirmed Gender, school status, educational background, and intended full-name value are still needed.
-- Judge-access audit: canonical GitHub repository is now **public**; logged-out clean WAG session opens the repository and README successfully.
+- Project details: **PASS** — required contact field is present; stale Panta wording was corrected and persisted.
+- Media and code: **PASS / Complete** — corrected demo, pitch, public GitHub, graphic, X, and live product link are present.
+- Team: **PASS** — submission profile now shows **Complete** using operator-confirmed personal values.
+- Judge-access audit: **PASS** — canonical GitHub repository is public and clean WAG sessions can open the required public links.
+- Review submission: **READY** — portal explicitly says `Your project is ready.`
+- Submission availability: **WAITING** — portal says submissions open `October 6, 2026 at 4:00 AM PDT`.
 
-Do not submit yet.
+Do not submit yet; the Colosseum submission window is not open.
 
 ## Panta Sidetrack
 
 Authenticated Panta API integration now works through the official test environment. The current market is explicitly sandbox/test and not mainnet.
 
-Final submission remains blocked until:
+Final Colosseum submission remains blocked only until:
 
-1. final public-link/judge-access recheck remains PASS — revalidated 2026-10-02;
-2. all claims consistently describe Panta as **test/sandbox API** unless a production key is later used;
-3. remaining Colosseum profile/contact fields are completed;
-4. the final PRE-SUBMIT audit is rerun after those personal fields are saved.
+1. the portal submission window opens;
+2. the final public-link / claim / secret checks are re-run immediately before submit;
+3. the operator performs the human-only final submission action.
+
+All currently editable required Colosseum fields are complete.
 
 ## Superteam Vietnam
 
@@ -157,10 +160,8 @@ Final submission stays **NO-GO** until every required gate is PASS.
 
 ## Next
 
-1. Obtain operator-confirmed Telegram contact + founder-profile values.
-2. Final clean-session judge access across production, public GitHub, corrected demo, and pitch — PASS on 2026-10-02.
-3. Keep final submission blocked until those personal/contact fields are complete.
-4. Re-audit all public/form/video claims.
-5. Resolve Superteam Vietnam pitch-language constraint.
-6. Run the final PRE-SUBMIT audit.
-7. Submit only when every required gate is PASS.
+1. Wait for the Colosseum submission window to open on `October 6, 2026 at 4:00 AM PDT`.
+2. Immediately before submission, re-run public-link, secret, production, Panta-labeling, media, and claim checks.
+3. Keep the final Colosseum submit action human-only.
+4. Superteam Vietnam remains a separate HUMAN_ONLY sidetrack hold until pitch-language/attendance handling is confirmed.
+5. Do not change the verified demo/pitch URLs unless a new audit is run.

@@ -4,9 +4,11 @@ Last audited: 2026-10-02 (Asia/Ho_Chi_Minh)
 
 ## Decision
 
-**NO-GO — DO NOT SUBMIT YET**
+**COLOSSEUM READY — WAITING FOR SUBMISSION WINDOW — DO NOT SUBMIT YET**
 
-This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vietnam. Do not click a final submission button until every required gate below is PASS or an explicitly optional item is waived.
+The authenticated Colosseum review page says `Your project is ready.` All currently editable required Colosseum fields are complete. The portal says submission opens `October 6, 2026 at 4:00 AM PDT`, so final submission remains blocked until that window opens and the final pre-submit checks are rerun.
+
+Panta sidetrack readiness depends on the eventual Colosseum submission. Superteam Vietnam remains a separate `HUMAN_ONLY` hold while pitch-language/attendance handling remains unresolved.
 
 ## Canonical product state
 
@@ -35,9 +37,11 @@ This file is the final gate for Colosseum, Panta API Sidetrack, and Superteam Vi
 | Panta credential handling | PASS so far | `PANTA_API_KEY` is stored as a Vercel Production secret and is not present in the repository/workspace. Re-scan before final submit. |
 | Panta environment labeling | PASS | Production now returns `environment: test`, shows **PANTA TEST API**, and displays `Authenticated Panta test API — sandbox market data, not mainnet.` |
 | Panta Sidetrack working demo | PASS | Corrected 59.9s production demo with AAC voiceover is uploaded Unlisted at `https://www.youtube.com/watch?v=ojFtIuhCa3Y` and persisted in Colosseum. Local ffprobe verifies H.264 + AAC audio; captions accurately label Panta TEST/sandbox/not-mainnet. |
-| Colosseum project details | **BLOCKED** | Exactly one required field remains: team Telegram contact. |
+| Colosseum project details | PASS | All required project-detail fields are complete, including the operator-confirmed Telegram contact. |
 | Colosseum media | PASS | Authenticated portal shows **Media and code Complete**. Demo and pitch URLs are persisted server-side and both YouTube links are reachable from a clean WAG session. |
-| Colosseum founder/team profile | **BLOCKED** | Team shows `0 of 1 complete`; personal required fields still need operator-confirmed values. |
+| Colosseum founder/team profile | PASS | Required personal profile fields were filled only from operator-confirmed values; authenticated review now shows `Submission profile: Complete`. |
+| Colosseum review readiness | PASS / READY | Authenticated review page explicitly says `Your project is ready.` |
+| Colosseum submission window | WAITING | Portal says submission opens `October 6, 2026 at 4:00 AM PDT`; do not submit before the window opens. |
 | Project graphic | PASS | `docs/submission/shipsignal-project-graphic.png` uploaded to Colosseum. |
 | Demo video | PASS | Corrected 59.9s H.264 + AAC product demo uploaded to YouTube as Unlisted: `https://www.youtube.com/watch?v=ojFtIuhCa3Y`. The prior `eL-SsnCKv2M` upload was silent because its source file had no audio stream and is no longer used in Colosseum. |
 | Pitch video | PASS | Authenticated Colosseum portal requires **Up to 2 minutes**. The 94.07s primary candidate was uploaded to YouTube as Unlisted: `https://www.youtube.com/watch?v=nrI4ky_LUL4`. Clean WAG session opens the video successfully. The 136.776s v2 remains backup only. |
@@ -64,9 +68,9 @@ Current project-details values observed in the authenticated local Edge session:
 - Outside contributors disclosure: AI coding assistants disclosed; no unlisted human contributors claimed
 - Additional judge context: updated in the authenticated portal to state GitHub telemetry is live and Panta is authenticated official test/sandbox data, explicitly not mainnet
 
-Missing required project field:
+Required project fields:
 
-- **Team Telegram contact**
+- **PASS** — team Telegram contact is present using the operator-confirmed value. The contact value is intentionally not duplicated in this public repository.
 
 Media audit:
 
@@ -79,25 +83,13 @@ Media audit:
 
 ## Founder submission-profile audit
 
-Already present:
+- Full name value was explicitly confirmed by the operator.
+- Role, country, city, X, GitHub, and relevant builder experience are present.
+- Required personal fields were completed using only operator-confirmed values; those personal values are intentionally not duplicated in this public repository.
+- Authenticated Colosseum review now shows `Submission profile: Complete`.
+- Age did not show a required marker in the observed form.
 
-- Full name field currently displays `HoaNguyen` — **operator must verify this is the intended full-name value before final submission**
-- Role: `Founder & Software Builder`
-- Country: `Vietnam`
-- City: `Nha Trang`
-- X: `https://x.com/hoanguyen1609`
-- GitHub: `https://github.com/ShenJun93`
-- Relevant builder experience: present
-
-Required personal fields still unresolved:
-
-- **Gender**
-- **Are you currently in school?**
-- **Educational background**
-
-Age is visible but did not show a required marker in the observed form; verify again before final submit.
-
-Do not infer or fabricate personal answers.
+**PASS.** Do not infer, expand, or alter personal-profile answers without new operator input.
 
 ## Panta API Sidetrack audit
 
@@ -122,7 +114,7 @@ Observed 2026-09-30:
 
 Current ShipSignal status against this listing:
 
-**DO NOT SUBMIT YET.** ShipSignal authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market with explicit **test/sandbox, not mainnet** labeling. Corrected demo + pitch are uploaded and persisted, and the GitHub repository is public. Remaining blockers are the founder/contact fields and the final PRE-SUBMIT pass.
+**TECHNICALLY READY / WAITING FOR COLOSSEUM SUBMISSION.** ShipSignal authenticates to the Panta API and production `/api/markets` returns the official `pk_test_` sandbox market with explicit **test/sandbox, not mainnet** labeling. Corrected demo + pitch are uploaded and persisted, GitHub is public, and the authenticated Colosseum review says `Your project is ready.` Panta sidetrack submission must remain pending until the required Colosseum submission exists.
 
 ## Panta Terms audit
 
@@ -216,12 +208,10 @@ A public FAQ observed earlier said 2–3 minutes, which conflicts with the authe
 
 ## Next execution order
 
-1. Keep final submission blocked.
-2. Obtain operator-confirmed Telegram contact and founder-profile answers; do not infer personal values.
-3. Re-run one final clean-session judge check across production, public GitHub, corrected demo, and pitch.
-4. Keep final submission blocked until the personal/contact fields are complete.
-5. Re-audit all form/video/README claims so Panta is described as authenticated **test/sandbox API**, not mainnet.
-6. Resolve Superteam Vietnam live-pitch language/attendance constraint before entering that sidetrack.
-7. Re-run security scan and production smoke.
-8. Run final PRE-SUBMIT audit.
-9. Only after all required rows are PASS may the operator proceed to final human-only submissions.
+1. Keep final Colosseum submission blocked until the portal window opens `October 6, 2026 at 4:00 AM PDT`.
+2. Immediately before submission, re-run clean-session checks for production, public GitHub, corrected demo, and pitch.
+3. Re-run secret scan, lint, TypeScript, production Panta response, and final claim audit.
+4. Confirm the portal still says `Your project is ready.` and that the verified URLs/answers have not changed.
+5. Keep the final Colosseum submit action human-only.
+6. After a valid Colosseum submission exists, prepare the Panta sidetrack human submission.
+7. Superteam Vietnam remains a separate HUMAN_ONLY hold until pitch-language/attendance handling is confirmed.
