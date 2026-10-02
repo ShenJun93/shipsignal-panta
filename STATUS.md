@@ -60,27 +60,29 @@ https://github.com/ShenJun93/shipsignal-panta/pull/2 — **MERGED**
 - Deployment ID: `dpl_GU1hRicA3AzTiM1HZB6WKzPe2za9`.
 - `PANTA_API_KEY` is stored as a Vercel **Production** secret.
 - No runtime errors were found in the checked 1-hour window on 2026-10-01.
+- Latest production deployment rechecked on 2026-10-02: `dpl_6XUiQEZDfJU2F6VCUQH7L9SZ87AM` — **READY**, Git SHA `da7c3b4dbd438679c012df0360007db612591c46`.
 
 ### Production smoke
 
-Revalidated on 2026-10-01 from a clean WAG BrowserPort session.
+Revalidated again on 2026-10-02 from a fresh WAG BrowserPort session.
 
-- Homepage: HTTP 200.
+- Homepage: HTTP 200 / clean-session accessible.
 - GitHub PR #375 telemetry: PASS.
-- Delivery score: 80.
+- Current delivery score: **75**. This is live repository telemetry and may change; the earlier 80 score was a historical snapshot, not a fixed product value.
 - Panta API: authenticated.
-- Current Panta credential: `pk_test_`.
+- Current Panta credential class: `pk_test_`.
 - Returned market: `Sandbox test market`.
 - API response:
   - `mode: live`
   - `environment: test`
+  - `source: panta`
   - notice: `Authenticated Panta test API — sandbox market data, not mainnet.`
 - Clean BrowserPort verification confirmed:
   - **GITHUB LIVE**
   - **PANTA TEST API**
   - sandbox/not-mainnet notice
   - **Powered by Panta**
-  - combined signal from repo 80% vs sandbox crowd 50%.
+  - Analyze PR succeeds against PR #375 and renders a delivery score plus the crowd comparison.
 
 The product no longer presents Panta test/sandbox data as generic live/mainnet data.
 
