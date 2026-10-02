@@ -30,7 +30,7 @@ Panta sidetrack readiness depends on the eventual Colosseum submission. Supertea
 | Colosseum account + hackathon registration | PASS | Operator personally accepted the legal gate and registered. |
 | Colosseum project draft | PASS | Project ID `15220` exists and is editable. |
 | Production homepage | PASS | Clean WAG final-link smoke revalidated production on 2026-10-02. |
-| Live GitHub telemetry | PASS | Clean BrowserPort run on 2026-10-01 analyzed PR #375 successfully and showed delivery score 80. |
+| Live GitHub telemetry | PASS | Fresh WAG recheck on 2026-10-02 analyzed PR #375 successfully and showed current delivery score **75**. The score is derived from live repository telemetry and is expected to vary; the earlier 80 score was a historical snapshot. |
 | Panta attribution | PASS | Product visibly uses exact text **Powered by Panta**. |
 | Authenticated Panta API integration | PASS | Production `/api/markets` returns authenticated Panta API data. Current credential is a Panta **test** key and returns the official sandbox market, not mainnet data. |
 | Panta API legal gate | PASS — operator completed | Operator personally completed the Panta Terms / credential gate before authenticated API use. |
@@ -48,7 +48,7 @@ Panta sidetrack readiness depends on the eventual Colosseum submission. Supertea
 | Git history / hackathon-window evidence | PASS so far | ShipSignal repository and implementation commits are dated during the current hackathon period. Re-check before final submit. |
 | Secret scan | PASS as of 2026-10-02 | Tracked-worktree path-only scan found no credential-shaped `sk-`, `ghp_`, `pk_live_`, `pk_test_`, or private-key material. |
 | Local browser-profile hygiene | PASS | Temporary `.edge-demo*` profiles removed and ignored. |
-| Final clean-session judge test | PASS for technical/public links | On 2026-10-02 a fresh WAG session opened production, the public GitHub repo, corrected demo `ojFtIuhCa3Y`, and pitch `nrI4ky_LUL4` with no 404/private/unavailable blockers. Personal/contact form blockers remain separate. |
+| Final clean-session judge test | PASS for technical/public links | Rechecked again on 2026-10-02: fresh WAG sessions opened production, the public GitHub repo, corrected demo `ojFtIuhCa3Y`, and pitch `nrI4ky_LUL4` with no 404/private/unavailable blockers. Colosseum also still reports `Your project is ready.` and `Submission profile: Complete`. |
 | Final claim audit | PASS so far | Authenticated Colosseum project details use authenticated Panta test/sandbox wording, explicitly not mainnet. Demo and pitch URLs are now persisted. Re-check once more immediately before final submit. |
 
 ## Colosseum form audit
