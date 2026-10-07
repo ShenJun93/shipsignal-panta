@@ -699,13 +699,21 @@ export default function ShipSignalDashboard() {
                 {quoteResult?.unsignedTransaction ? (
                   <div className="mt-2 space-y-1.5 rounded-xl border border-cyan-300/20 bg-cyan-300/[0.05] p-3 text-xs leading-5">
                     <div className="font-medium text-cyan-100">
-                      Panta built the unsigned create transaction ({quoteResult.unsignedTransaction.transactionBytes}{" "}
-                      bytes)
+                      {quoteResult.unsignedTransaction.transactionBytes > 0
+                        ? `Panta built the unsigned create transaction (${quoteResult.unsignedTransaction.transactionBytes} bytes)`
+                        : "Panta answered the build step with a sandbox placeholder"}
                     </div>
-                    <div className="truncate font-mono text-[11px] text-slate-400">
-                      Blockhash {shortAddress(quoteResult.unsignedTransaction.recentBlockhash || "—")} · valid to block{" "}
-                      {quoteResult.unsignedTransaction.lastValidBlockHeight}
-                    </div>
+                    {quoteResult.unsignedTransaction.transactionBytes > 0 ? (
+                      <div className="truncate font-mono text-[11px] text-slate-400">
+                        Blockhash {shortAddress(quoteResult.unsignedTransaction.recentBlockhash || "—")} · valid to
+                        block {quoteResult.unsignedTransaction.lastValidBlockHeight}
+                      </div>
+                    ) : (
+                      <div className="text-slate-400">
+                        The test API returns no transaction bytes. With a live key this step returns the transaction
+                        the creator&apos;s wallet signs.
+                      </div>
+                    )}
                     {Object.entries(quoteResult.unsignedTransaction.derived)
                       .slice(0, 3)
                       .map(([name, address]) => (
@@ -713,7 +721,11 @@ export default function ShipSignalDashboard() {
                           {name} {shortAddress(String(address))}
                         </div>
                       ))}
-                    <div className="text-slate-500">Ready for the creator&apos;s wallet to sign. ShipSignal does not sign it.</div>
+                    {quoteResult.unsignedTransaction.transactionBytes > 0 ? (
+                      <div className="text-slate-500">
+                        Ready for the creator&apos;s wallet to sign. ShipSignal does not sign it.
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
 
