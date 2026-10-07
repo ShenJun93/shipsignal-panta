@@ -1,4 +1,11 @@
-import type { DeliveryMarketDraft, MarketCreateQuote, MarketFeed, PantaError, PantaMarket } from "@/lib/types";
+import type {
+  DeliveryMarketDraft,
+  MarketCreateQuote,
+  MarketFeed,
+  PantaError,
+  PantaMarket,
+  UnsignedCreateTransaction,
+} from "@/lib/types";
 
 const DEMO_MARKETS: PantaMarket[] = [
   {
@@ -137,7 +144,8 @@ export async function getMarket(marketId: string): Promise<PantaMarket> {
 // ShipSignal stops here. Building, signing and broadcasting the create transaction stay with the
 // creator's wallet.
 export async function quoteMarketCreate(draft: DeliveryMarketDraft, wallet: string): Promise<MarketCreateQuote> {
-  return pantaFetch<MarketCreateQuote>("/markets/create/quote/", {
+  // Keep only the fields the product shows; Panta also returns account and key identifiers.
+  const quote = await pantaFetch<MarketCreateQuote>("/markets/create/quote/", {
     method: "POST",
     body: JSON.stringify({
       wallet,
@@ -155,6 +163,41 @@ export async function quoteMarketCreate(draft: DeliveryMarketDraft, wallet: stri
       imageUrl: draft.imageUrl,
     }),
   });
+  return {
+    createId: quote.createId,
+    expectedEventPda: quote.expectedEventPda,
+    paymentUsdc: quote.paymentUsdc,
+    liquidityInjectionUsdc: quote.liquidityInjectionUsdc,
+    platformRevenueUsdc: quote.platformRevenueUsdc,
+    marketType: quote.marketType,
+    expiresAt: quote.expiresAt,
+    disclaimer: quote.disclaimer,
+  };
+}
+
+// Step 2: Panta returns the unsigned create transaction for the quoted session. The creator's
+// wallet signs and broadcasts it; ShipSignal only passes it through.
+export async function buildMarketCreate(createId: string, wallet: string): Promise<UnsignedCreateTransaction> {
+  const built = await pantaFetch<{
+    transaction: string;
+    recentBlockhash: string;
+    lastValidBlockHeight: number;
+    blockhashExpiryHintSec?: number;
+    derived?: Record<string, string>;
+    disclaimer?: string;
+  }>("/markets/create/build/", {
+    method: "POST",
+    body: JSON.stringify({ createId, wallet }),
+  });
+  return {
+    transaction: built.transaction,
+    transactionBytes: Buffer.from(built.transaction || "", "base64").length,
+    recentBlockhash: built.recentBlockhash,
+    lastValidBlockHeight: built.lastValidBlockHeight,
+    blockhashExpiryHintSec: built.blockhashExpiryHintSec ?? null,
+    derived: built.derived || {},
+    disclaimer: built.disclaimer,
+  };
 }
 
 export async function quotePrimaryBuy(input: {

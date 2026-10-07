@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { draftDeliveryMarket, parseDeadlineDays } from "@/lib/delivery-market";
 import { getPullRequestSignal } from "@/lib/github";
-import { PantaApiError, pantaEnvironment, quoteMarketCreate } from "@/lib/panta";
+import { buildMarketCreate, PantaApiError, pantaEnvironment, quoteMarketCreate } from "@/lib/panta";
 import { publicOrigin } from "@/lib/signal";
 
 // Panta's sandbox fixture creator, used only with pk_test_ keys when no wallet is given.
 const SANDBOX_CREATOR = "Creator1111111111111111111111111111111";
 const BASE58_PUBKEY = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
-// Drafts a delivery market for an open pull request and asks Panta to quote it (validate + fee).
-// Nothing is signed or broadcast here.
+// Drafts a delivery market for an open pull request, asks Panta to quote it (validate + fee) and to
+// build the unsigned create transaction. Nothing is signed or broadcast here.
 export async function POST(request: Request) {
   let body: { pr?: string; days?: number; wallet?: string };
   try {
@@ -41,11 +41,23 @@ export async function POST(request: Request) {
     }
 
     const result = { environment, wallet, walletIsSandboxFixture: wallet === SANDBOX_CREATOR, draft };
+    let quote;
     try {
-      return NextResponse.json({ ...result, quote: await quoteMarketCreate(draft, wallet), pantaError: null });
+      quote = await quoteMarketCreate(draft, wallet);
     } catch (error) {
       if (error instanceof PantaApiError) {
-        return NextResponse.json({ ...result, quote: null, pantaError: error.detail });
+        return NextResponse.json({ ...result, quote: null, unsignedTransaction: null, pantaError: error.detail });
+      }
+      throw error;
+    }
+
+    // With a quote in hand, ask Panta for the unsigned transaction the creator's wallet would sign.
+    try {
+      const unsignedTransaction = await buildMarketCreate(quote.createId, wallet);
+      return NextResponse.json({ ...result, quote, unsignedTransaction, pantaError: null });
+    } catch (error) {
+      if (error instanceof PantaApiError) {
+        return NextResponse.json({ ...result, quote, unsignedTransaction: null, pantaError: error.detail });
       }
       throw error;
     }

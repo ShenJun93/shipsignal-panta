@@ -4,7 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { DEADLINE_OPTIONS, usdc } from "@/lib/delivery-market";
 import type { Comparison, SignalReport } from "@/lib/signal";
-import type { DeliveryMarketDraft, MarketCreateQuote, MarketFeed, PantaError } from "@/lib/types";
+import type {
+  DeliveryMarketDraft,
+  MarketCreateQuote,
+  MarketFeed,
+  PantaError,
+  UnsignedCreateTransaction,
+} from "@/lib/types";
 
 const EXAMPLE_PRS = [
   { label: "Anchor · transaction v1 buffers", url: "https://github.com/otter-sec/anchor/pull/5095" },
@@ -19,6 +25,7 @@ type QuoteResult = {
   walletIsSandboxFixture: boolean;
   draft: DeliveryMarketDraft;
   quote: MarketCreateQuote | null;
+  unsignedTransaction: UnsignedCreateTransaction | null;
   pantaError: PantaError | null;
 };
 
@@ -46,6 +53,12 @@ function signalTone(score: number | null) {
 
 function utc(unixSeconds: number) {
   return `${new Date(unixSeconds * 1000).toISOString().slice(0, 16).replace("T", " ")} UTC`;
+}
+
+function expiry(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "unknown";
+  return date.getUTCFullYear() > 2090 ? "never (sandbox)" : date.toLocaleTimeString();
 }
 
 function shortAddress(value: string) {
@@ -623,7 +636,8 @@ export default function ShipSignalDashboard() {
               <div className="rounded-xl border border-white/[0.07] bg-black/10 p-4">
                 <div className="text-sm font-medium text-white">Quote it with Panta</div>
                 <p className="mt-1 text-xs leading-5 text-slate-500">
-                  Panta validates the parameters and returns the USDC creation fee. Nothing is signed or sent.
+                  Panta validates the parameters, returns the USDC creation fee and builds the unsigned transaction.
+                  Nothing is signed or sent.
                 </p>
                 <input
                   className="mt-3 w-full rounded-xl border border-white/10 bg-[#071018] px-3 py-2.5 font-mono text-xs text-slate-200 outline-none placeholder:text-slate-600 focus:border-cyan-300/40"
@@ -677,9 +691,34 @@ export default function ShipSignalDashboard() {
                     <div className="text-slate-500">
                       Creator {shortAddress(quoteResult.wallet)}
                       {quoteResult.walletIsSandboxFixture ? " (Panta sandbox fixture)" : ""} · quote expires{" "}
-                      {new Date(quoteResult.quote.expiresAt).toLocaleTimeString()}
+                      {expiry(quoteResult.quote.expiresAt)}
                     </div>
                   </div>
+                ) : null}
+
+                {quoteResult?.unsignedTransaction ? (
+                  <div className="mt-2 space-y-1.5 rounded-xl border border-cyan-300/20 bg-cyan-300/[0.05] p-3 text-xs leading-5">
+                    <div className="font-medium text-cyan-100">
+                      Panta built the unsigned create transaction ({quoteResult.unsignedTransaction.transactionBytes}{" "}
+                      bytes)
+                    </div>
+                    <div className="truncate font-mono text-[11px] text-slate-400">
+                      Blockhash {shortAddress(quoteResult.unsignedTransaction.recentBlockhash || "—")} · valid to block{" "}
+                      {quoteResult.unsignedTransaction.lastValidBlockHeight}
+                    </div>
+                    {Object.entries(quoteResult.unsignedTransaction.derived)
+                      .slice(0, 3)
+                      .map(([name, address]) => (
+                        <div key={name} className="truncate font-mono text-[11px] text-slate-500">
+                          {name} {shortAddress(String(address))}
+                        </div>
+                      ))}
+                    <div className="text-slate-500">Ready for the creator&apos;s wallet to sign. ShipSignal does not sign it.</div>
+                  </div>
+                ) : null}
+
+                {quoteResult?.quote?.disclaimer ? (
+                  <div className="mt-2 text-[11px] leading-4 text-amber-100/60">{quoteResult.quote.disclaimer}</div>
                 ) : null}
 
                 {quoteResult?.pantaError ? (
@@ -699,8 +738,8 @@ export default function ShipSignalDashboard() {
                 ) : null}
 
                 <p className="mt-3 text-[11px] leading-4 text-slate-600">
-                  Next, in the creator&apos;s wallet: Panta builds the unsigned transaction, the wallet signs and
-                  broadcasts it, then Panta registers the market. ShipSignal never holds keys or funds.
+                  Next, in the creator&apos;s wallet: sign and broadcast the transaction, then Panta registers the
+                  market. ShipSignal never holds keys or funds.
                 </p>
               </div>
             </div>
