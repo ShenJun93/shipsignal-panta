@@ -2,18 +2,19 @@
 
 Prediction intelligence for software delivery.
 
-ShipSignal combines public GitHub delivery telemetry with prediction-market probability from [Panta](https://panta.market) to surface disagreement between **observable execution evidence** and **crowd belief**.
+ShipSignal turns a GitHub pull request into a question a prediction market can price: *will this PR merge by a deadline?*
+
+1. **Observe.** It scores the pull request from public GitHub evidence (draft state, mergeability, checks, age) and shows the evidence behind the score.
+2. **Match.** It scans the [Panta](https://panta.market) catalog for a market that names the pull request or its repository. A crowd price is compared with the repository evidence only when the market is about that pull request, or when the user links one and the page labels it as user-linked.
+3. **Draft.** When no market exists, it drafts one that resolves from GitHub: question, resolution rule, sources of truth, trading window. It then asks Panta to quote it (`POST /markets/create/quote/`), so Panta validates the parameters and returns the USDC creation fee. Building, signing and broadcasting stay with the creator's wallet; ShipSignal never holds keys or funds.
 
 ## Production demo
 
-https://shipsignal-panta.vercel.app
+https://shipsignal-panta.vercel.app (open `/?demo=1` to load the first example automatically)
 
-The first real repository signal is the Mermail access-review PR:
-
-- https://github.com/Nudgen-Marketing/mermail-skills/pull/375
-- GitHub data is fetched live through ShipSignal's server route.
-- Production is connected to Panta through an authenticated **test API** key and currently returns Panta's official sandbox market.
-- The UI explicitly labels this as **PANTA TEST API** and **sandbox market data, not mainnet**.
+- Examples are open pull requests in Solana repositories (Anchor, Agave). GitHub data is fetched live.
+- Production is connected to Panta through an authenticated **test API** key. The catalog returns Panta's sandbox market, and quotes run against the sandbox.
+- The UI labels this as **PANTA TEST API** and **sandbox market data, not mainnet**.
 
 ShipSignal never represents fixture, test, or sandbox data as mainnet production market information.
 
@@ -64,6 +65,23 @@ GET /api/github-pr?url=https://github.com/owner/repo/pull/123
 
 Returns public PR telemetry plus an evidence-backed heuristic delivery score.
 
+### Combined signal (for agents)
+
+```
+GET /api/signal?pr=https://github.com/owner/repo/pull/123&days=14
+```
+
+Returns the pull-request evidence, the Panta markets that mention it, a comparison when one does, and a drafted delivery market (`days` is 7, 14 or 30).
+
+### Quote a drafted market with Panta
+
+```
+POST /api/market-draft
+{ "pr": "https://github.com/owner/repo/pull/123", "days": 14, "wallet": "<creator public address>" }
+```
+
+Drafts the market and calls Panta's create quote. Returns Panta's quote (fee, liquidity portion, expected event address, expiry) or Panta's error envelope. With a `pk_test_` key the wallet is optional and defaults to Panta's sandbox fixture creator. Nothing is signed or broadcast.
+
 ### Panta market feed
 
 ```
@@ -76,8 +94,8 @@ Without `PANTA_API_KEY`, this returns clearly marked demo fixtures. With a confi
 
 1. **M0 — Product shell:** dashboard, explicit data-environment labeling, GitHub signal, Panta adapter.
 2. **M1 — Authenticated Panta reads:** authorized Panta market list/detail integration with test/production labeling.
-3. **M2 — Transaction intents:** market creation, buy, positions and claims with user-wallet signing.
-4. **M3 — Agent surface:** machine-readable decision endpoint / agent workflow.
+3. **M2 — Delivery markets:** draft a GitHub-resolved market for any open PR and get a Panta create quote (done). Next: build the unsigned create transaction for the creator's wallet, then buy, positions and claims.
+4. **M3 — Agent surface:** `GET /api/signal` and `POST /api/market-draft` (done).
 5. **M4 — Demo + traction:** deployed product and real usage.
 6. **M5 — Hackathon submission:** Colosseum + eligible sidetracks.
 

@@ -1,10 +1,26 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import type { DecisionSignal, GitHubPullRequestSignal, MarketFeed } from "@/lib/types";
+import { DEADLINE_OPTIONS, usdc } from "@/lib/delivery-market";
+import type { Comparison, SignalReport } from "@/lib/signal";
+import type { DeliveryMarketDraft, MarketCreateQuote, MarketFeed, PantaError } from "@/lib/types";
 
-const DEFAULT_PR = "https://github.com/Nudgen-Marketing/mermail-skills/pull/375";
+const EXAMPLE_PRS = [
+  { label: "Anchor · transaction v1 buffers", url: "https://github.com/otter-sec/anchor/pull/5095" },
+  { label: "Agave · Alpenglow in test validator", url: "https://github.com/anza-xyz/agave/pull/15665" },
+  { label: "Anchor · v2.0.0-rc.2", url: "https://github.com/otter-sec/anchor/pull/5150" },
+];
+const DEFAULT_PR = EXAMPLE_PRS[0].url;
+
+type QuoteResult = {
+  environment: MarketFeed["environment"];
+  wallet: string;
+  walletIsSandboxFixture: boolean;
+  draft: DeliveryMarketDraft;
+  quote: MarketCreateQuote | null;
+  pantaError: PantaError | null;
+};
 
 function toProbability(value?: string | null) {
   if (!value) return null;
@@ -28,15 +44,56 @@ function signalTone(score: number | null) {
   return "text-rose-300";
 }
 
+function utc(unixSeconds: number) {
+  return `${new Date(unixSeconds * 1000).toISOString().slice(0, 16).replace("T", " ")} UTC`;
+}
+
+function shortAddress(value: string) {
+  return value.length > 16 ? `${value.slice(0, 6)}…${value.slice(-6)}` : value;
+}
+
+const BASIS_LABEL: Record<Comparison["basis"], string> = {
+  "pull-request": "Market names this pull request",
+  repository: "Market names this repository",
+  "user-linked": "Linked by you — ShipSignal did not verify that this market is about this PR",
+};
+
+function compareClient(report: SignalReport, market: MarketFeed["items"][number]): Comparison | null {
+  const crowdProbability = toProbability(market.yesPrice);
+  if (crowdProbability === null) return null;
+  const deliveryScore = report.pullRequest.deliveryScore;
+  const gap = Math.abs(crowdProbability - deliveryScore);
+  const direction =
+    deliveryScore > crowdProbability
+      ? "Repository evidence is ahead of the crowd."
+      : "The crowd is more confident than the repository evidence.";
+  const interpretation =
+    gap >= 25
+      ? `Large disagreement (${gap} pt). ${direction}`
+      : gap >= 10
+        ? `Moderate disagreement (${gap} pt). ${direction} Worth a human or agent review.`
+        : `Signals broadly agree (${gap} pt).`;
+  return { market, basis: "user-linked", deliveryScore, crowdProbability, gap, interpretation };
+}
+
 export default function ShipSignalDashboard() {
   const [prUrl, setPrUrl] = useState(DEFAULT_PR);
-  const [pr, setPr] = useState<GitHubPullRequestSignal | null>(null);
+  const [deadlineDays, setDeadlineDays] = useState<number>(14);
+  const [report, setReport] = useState<SignalReport | null>(null);
   const [feed, setFeed] = useState<MarketFeed | null>(null);
   const [selectedMarketId, setSelectedMarketId] = useState<string | null>(null);
+  const [linkedMarketId, setLinkedMarketId] = useState<string | null>(null);
   const [loadingPr, setLoadingPr] = useState(false);
   const [loadingMarkets, setLoadingMarkets] = useState(true);
   const [prError, setPrError] = useState("");
   const [marketError, setMarketError] = useState("");
+  const [wallet, setWallet] = useState("");
+  const [quoting, setQuoting] = useState(false);
+  const [quoteResult, setQuoteResult] = useState<QuoteResult | null>(null);
+  const [quoteError, setQuoteError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const pr = report?.pullRequest ?? null;
 
   useEffect(() => {
     let cancelled = false;
@@ -45,7 +102,7 @@ export default function ShipSignalDashboard() {
       setLoadingMarkets(true);
       setMarketError("");
       try {
-        const response = await fetch("/api/markets?status=primary&limit=12");
+        const response = await fetch("/api/markets?limit=50");
         const data = (await response.json()) as MarketFeed & { error?: string };
         if (!response.ok) throw new Error(data.error || "Unable to load market feed");
         if (cancelled) return;
@@ -66,91 +123,95 @@ export default function ShipSignalDashboard() {
     };
   }, []);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("demo") !== "1") return;
-
-    let cancelled = false;
-
-    async function loadDemoPullRequest() {
-      setLoadingPr(true);
-      setPrError("");
-      try {
-        const response = await fetch(`/api/github-pr?url=${encodeURIComponent(DEFAULT_PR)}`);
-        const data = (await response.json()) as GitHubPullRequestSignal & { error?: string };
-        if (!response.ok) throw new Error(data.error || "Unable to analyze pull request");
-        if (!cancelled) setPr(data);
-      } catch (error) {
-        if (!cancelled) {
-          setPr(null);
-          setPrError(error instanceof Error ? error.message : "Unable to analyze pull request");
-        }
-      } finally {
-        if (!cancelled) setLoadingPr(false);
-      }
-    }
-
-    loadDemoPullRequest();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const selectedMarket = useMemo(
-    () => feed?.items.find((market) => market.marketId === selectedMarketId) || null,
-    [feed, selectedMarketId],
-  );
-
-  const decision = useMemo<DecisionSignal>(() => {
-    const crowdProbability = toProbability(selectedMarket?.yesPrice);
-    const deliveryScore = pr?.deliveryScore ?? null;
-    const disagreement =
-      crowdProbability !== null && deliveryScore !== null
-        ? Math.abs(crowdProbability - deliveryScore)
-        : null;
-
-    let interpretation =
-      "Analyze a pull request and select a Panta market to compare execution evidence with crowd probability.";
-
-    if (deliveryScore !== null && crowdProbability !== null) {
-      if ((disagreement ?? 0) >= 25) {
-        interpretation =
-          "Large disagreement. Repository evidence and market belief are telling materially different stories.";
-      } else if ((disagreement ?? 0) >= 10) {
-        interpretation =
-          "Moderate disagreement. This is a useful review zone for humans or autonomous agents.";
-      } else {
-        interpretation =
-          "Signals broadly agree. Delivery evidence and market probability are directionally aligned.";
-      }
-    }
-
-    return {
-      repositorySignal: pr,
-      market: selectedMarket,
-      crowdProbability,
-      deliveryScore,
-      disagreement,
-      interpretation,
-    };
-  }, [pr, selectedMarket]);
-
-  async function analyzePullRequest(event?: FormEvent) {
-    event?.preventDefault();
+  const loadSignal = useCallback(async (url: string, days: number) => {
     setLoadingPr(true);
     setPrError("");
+    setQuoteResult(null);
+    setQuoteError("");
     try {
-      const response = await fetch(`/api/github-pr?url=${encodeURIComponent(prUrl.trim())}`);
-      const data = (await response.json()) as GitHubPullRequestSignal & { error?: string };
+      const response = await fetch(`/api/signal?pr=${encodeURIComponent(url.trim())}&days=${days}`);
+      const data = (await response.json()) as SignalReport & { error?: string };
       if (!response.ok) throw new Error(data.error || "Unable to analyze pull request");
-      setPr(data);
+      setReport(data);
+      setLinkedMarketId(null);
+      const match = data.panta.matches[0];
+      if (match) setSelectedMarketId(match.market.marketId);
     } catch (error) {
-      setPr(null);
+      setReport(null);
       setPrError(error instanceof Error ? error.message : "Unable to analyze pull request");
     } finally {
       setLoadingPr(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("demo") !== "1") return;
+    // Deferred so the demo load does not set state synchronously inside the effect.
+    const timer = window.setTimeout(() => loadSignal(DEFAULT_PR, 14), 0);
+    return () => window.clearTimeout(timer);
+  }, [loadSignal]);
+
+  const matchReason = useMemo(() => {
+    const reasons = new Map<string, string>();
+    for (const match of report?.panta.matches || []) reasons.set(match.market.marketId, match.reason);
+    return reasons;
+  }, [report]);
+
+  const comparison = useMemo<Comparison | null>(() => {
+    if (!report) return null;
+    if (report.comparison) return report.comparison;
+    const linked = feed?.items.find((market) => market.marketId === linkedMarketId);
+    return linked ? compareClient(report, linked) : null;
+  }, [report, feed, linkedMarketId]);
+
+  const selectedIsMatched = selectedMarketId ? matchReason.has(selectedMarketId) : false;
+
+  function analyzePullRequest(event?: FormEvent) {
+    event?.preventDefault();
+    loadSignal(prUrl, deadlineDays);
   }
+
+  function changeDeadline(days: number) {
+    setDeadlineDays(days);
+    if (report) loadSignal(report.pullRequest.url, days);
+  }
+
+  async function quoteDraft() {
+    if (!report) return;
+    setQuoting(true);
+    setQuoteError("");
+    setQuoteResult(null);
+    try {
+      const response = await fetch("/api/market-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pr: report.pullRequest.url, days: deadlineDays, wallet: wallet.trim() || undefined }),
+      });
+      const data = (await response.json()) as QuoteResult & { error?: string };
+      if (!response.ok) throw new Error(data.error || "Unable to quote the market");
+      setQuoteResult(data);
+    } catch (error) {
+      setQuoteError(error instanceof Error ? error.message : "Unable to quote the market");
+    } finally {
+      setQuoting(false);
+    }
+  }
+
+  async function copyDraft(draft: DeliveryMarketDraft) {
+    const { deadlineDays: _days, shipSignalPrior: _prior, ...request } = draft;
+    void _days;
+    void _prior;
+    try {
+      await navigator.clipboard.writeText(JSON.stringify({ wallet: "<creator wallet>", ...request }, null, 2));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  const draft = quoteResult?.draft || report?.draft || null;
 
   return (
     <main className="min-h-screen bg-[#071018] text-slate-100">
@@ -186,18 +247,19 @@ export default function ShipSignalDashboard() {
               Repo evidence × market belief
             </div>
             <h1 className="max-w-4xl text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-              Know when software delivery risk and crowd belief disagree.
+              Turn a pull request into a market the crowd can price.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg">
-              ShipSignal combines public GitHub delivery telemetry with Panta prediction-market odds,
-              then exposes a compact decision signal for builders, sponsors, and autonomous agents.
+              ShipSignal scores a GitHub pull request from its delivery evidence, looks for a Panta market that
+              tracks it, and when none exists drafts one that resolves from GitHub, quoted by Panta and ready for
+              the creator&apos;s wallet to sign.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.025] p-2">
             {[
               ["01", "Observe", "Repository evidence"],
-              ["02", "Compare", "Panta probability"],
-              ["03", "Act", "Decision signal"],
+              ["02", "Match", "Panta markets on this PR"],
+              ["03", "Draft", "A market Panta can quote"],
             ].map(([step, title, note]) => (
               <div key={step} className="rounded-xl border border-white/[0.06] bg-[#0a151f] p-4">
                 <div className="font-mono text-[10px] text-cyan-300">{step}</div>
@@ -237,6 +299,24 @@ export default function ShipSignalDashboard() {
               </button>
             </form>
 
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+              <span className="text-slate-600">Try</span>
+              {EXAMPLE_PRS.map((example) => (
+                <button
+                  key={example.url}
+                  type="button"
+                  disabled={loadingPr}
+                  onClick={() => {
+                    setPrUrl(example.url);
+                    loadSignal(example.url, deadlineDays);
+                  }}
+                  className="rounded-full border border-white/[0.08] px-2.5 py-1 text-slate-400 transition hover:border-cyan-300/40 hover:text-white"
+                >
+                  {example.label}
+                </button>
+              ))}
+            </div>
+
             {prError ? (
               <div className="mt-4 rounded-xl border border-rose-300/20 bg-rose-300/[0.06] p-3 text-sm text-rose-200">
                 {prError}
@@ -259,7 +339,7 @@ export default function ShipSignalDashboard() {
                       {pr.title}
                     </a>
                     <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-400">
-                      <span>{pr.draft ? "Draft" : "Ready for review"}</span>
+                      <span>{pr.state === "open" ? (pr.draft ? "Draft" : "Ready for review") : pr.state}</span>
                       <span>·</span>
                       <span>{pr.mergeable === null ? "Mergeability pending" : pr.mergeable ? "Mergeable" : "Conflict"}</span>
                       {pr.mergeableState ? (
@@ -302,6 +382,9 @@ export default function ShipSignalDashboard() {
                     </div>
                   ))}
                 </div>
+                <div className="mt-3 text-[11px] leading-4 text-slate-600">
+                  The score is a transparent heuristic over the evidence above, not a calibrated probability.
+                </div>
               </div>
             ) : (
               <div className="mt-5 rounded-xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-600">
@@ -314,7 +397,7 @@ export default function ShipSignalDashboard() {
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <div className="text-sm font-medium text-white">Market belief</div>
-                <div className="mt-1 text-xs text-slate-500">Prediction-market probability from Panta</div>
+                <div className="mt-1 text-xs text-slate-500">Panta markets, checked against the pull request</div>
               </div>
               <span
                 className={`rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider ${
@@ -345,9 +428,24 @@ export default function ShipSignalDashboard() {
               </div>
             ) : null}
 
-            <div className="space-y-2">
+            {report ? (
+              <div
+                className={`mb-3 rounded-xl border p-3 text-xs leading-5 ${
+                  report.panta.matches.length
+                    ? "border-emerald-300/20 bg-emerald-300/[0.05] text-emerald-100/90"
+                    : "border-white/[0.08] bg-white/[0.02] text-slate-400"
+                }`}
+              >
+                {report.panta.matches.length
+                  ? `${report.panta.matches.length} of ${report.panta.marketsScanned} Panta markets mention ${report.pullRequest.repository}.`
+                  : `None of the ${report.panta.marketsScanned} Panta markets scanned mention ${report.pullRequest.repository} or PR #${report.pullRequest.number}, so there is no crowd price to compare yet.`}
+              </div>
+            ) : null}
+
+            <div className="max-h-[22rem] space-y-2 overflow-y-auto pr-1">
               {feed?.items.map((market) => {
                 const selected = market.marketId === selectedMarketId;
+                const reason = matchReason.get(market.marketId);
                 return (
                   <button
                     key={market.marketId}
@@ -363,6 +461,11 @@ export default function ShipSignalDashboard() {
                       <div className="min-w-0">
                         <div className="font-mono text-[10px] uppercase tracking-wider text-slate-600">
                           {market.category || "market"} · {market.phase}
+                          {reason ? (
+                            <span className="ml-2 text-emerald-300">
+                              {reason === "pull-request" ? "tracks this PR" : "mentions this repo"}
+                            </span>
+                          ) : null}
                         </div>
                         <div className="mt-1 text-sm font-medium leading-5 text-slate-200">
                           {truncate(market.title, 100)}
@@ -379,6 +482,18 @@ export default function ShipSignalDashboard() {
                 );
               })}
             </div>
+
+            {report && selectedMarketId && !selectedIsMatched && !report.comparison ? (
+              <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs leading-5 text-slate-400">
+                <input
+                  type="checkbox"
+                  className="mt-1 accent-cyan-300"
+                  checked={linkedMarketId === selectedMarketId}
+                  onChange={(event) => setLinkedMarketId(event.target.checked ? selectedMarketId : null)}
+                />
+                <span>This market is about this pull request. Compare them anyway.</span>
+              </label>
+            ) : null}
 
             {!loadingMarkets && !marketError && !feed?.items.length ? (
               <div className="rounded-xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-600">
@@ -401,13 +516,13 @@ export default function ShipSignalDashboard() {
           <div className="grid gap-7 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-300">
-                Combined decision signal
+                Repository vs crowd
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2">
                 {[
-                  ["Repo", pct(decision.deliveryScore)],
-                  ["Crowd", pct(decision.crowdProbability)],
-                  ["Gap", decision.disagreement === null ? "—" : `${decision.disagreement}pt`],
+                  ["Repo", pct(pr?.deliveryScore ?? null)],
+                  ["Crowd", pct(comparison?.crowdProbability ?? null)],
+                  ["Gap", comparison ? `${comparison.gap}pt` : "—"],
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-xl border border-white/[0.07] bg-black/10 p-4">
                     <div className="text-2xl font-semibold tracking-tight text-white">{value}</div>
@@ -417,21 +532,186 @@ export default function ShipSignalDashboard() {
               </div>
             </div>
             <div className="flex flex-col justify-between rounded-xl border border-white/[0.07] bg-black/10 p-5">
-              <p className="text-base leading-7 text-slate-300">{decision.interpretation}</p>
+              <div>
+                <p className="text-base leading-7 text-slate-300">
+                  {!report
+                    ? "Analyze a pull request. ShipSignal compares it only with a Panta market that is actually about it."
+                    : comparison
+                      ? comparison.interpretation
+                      : report.draft
+                        ? "No Panta market prices this pull request yet. ShipSignal drafted one below."
+                        : "This pull request is closed, so there is nothing left to forecast."}
+                </p>
+                {comparison ? (
+                  <p className="mt-2 text-xs leading-5 text-slate-500">
+                    {truncate(comparison.market.title, 90)} · {BASIS_LABEL[comparison.basis]}
+                  </p>
+                ) : null}
+              </div>
               <div className="mt-6 flex flex-wrap gap-2 font-mono text-[10px] text-slate-500">
-                <span className="rounded border border-white/[0.07] px-2 py-1">/api/github-pr</span>
-                <span className="rounded border border-white/[0.07] px-2 py-1">/api/markets</span>
+                <span className="rounded border border-white/[0.07] px-2 py-1">GET /api/signal?pr=…</span>
+                <span className="rounded border border-white/[0.07] px-2 py-1">POST /api/market-draft</span>
                 <span className="rounded border border-white/[0.07] px-2 py-1">agent-ready</span>
               </div>
             </div>
           </div>
         </section>
 
+        {report && draft ? (
+          <section id="draft" className="mt-5 rounded-2xl border border-cyan-300/15 bg-[#0a151f]/90 p-5 sm:p-7">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-300">
+                  Delivery market draft
+                </div>
+                <h2 className="mt-3 text-xl font-semibold leading-7 tracking-tight text-white sm:text-2xl">
+                  {draft.question}
+                </h2>
+              </div>
+              <div className="flex shrink-0 gap-1 rounded-xl border border-white/10 bg-black/20 p-1" role="group" aria-label="Deadline">
+                {DEADLINE_OPTIONS.map((days) => (
+                  <button
+                    key={days}
+                    type="button"
+                    disabled={loadingPr}
+                    onClick={() => changeDeadline(days)}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                      deadlineDays === days ? "bg-cyan-300 text-[#041017]" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    {days} days
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+              <div className="space-y-4 text-sm leading-6">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-600">Resolution rule</div>
+                  <p className="mt-1 text-slate-300">{draft.resolutionRule}</p>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-600">Sources of truth</div>
+                  <ul className="mt-1 space-y-1">
+                    {draft.sourcesOfTruth.map((source) => (
+                      <li key={source} className="truncate font-mono text-xs text-cyan-200/80">
+                        {source}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  {[
+                    ["Trading opens", utc(draft.startTime)],
+                    ["Trading closes", utc(draft.endTime)],
+                    ["Resolves", utc(draft.resolutionTime)],
+                  ].map(([label, value]) => (
+                    <div key={label} className="rounded-xl border border-white/[0.06] bg-[#071018] p-3">
+                      <div className="text-[10px] uppercase tracking-wider text-slate-600">{label}</div>
+                      <div className="mt-1 text-xs text-slate-300">{value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-xs leading-5 text-slate-500">
+                  Category <span className="text-slate-300">{draft.category}</span> · standard market · ShipSignal
+                  prior <span className={signalTone(draft.shipSignalPrior)}>{draft.shipSignalPrior}% YES</span>{" "}
+                  (heuristic, shown to the creator, not sent to Panta)
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-white/[0.07] bg-black/10 p-4">
+                <div className="text-sm font-medium text-white">Quote it with Panta</div>
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Panta validates the parameters and returns the USDC creation fee. Nothing is signed or sent.
+                </p>
+                <input
+                  className="mt-3 w-full rounded-xl border border-white/10 bg-[#071018] px-3 py-2.5 font-mono text-xs text-slate-200 outline-none placeholder:text-slate-600 focus:border-cyan-300/40"
+                  value={wallet}
+                  onChange={(event) => setWallet(event.target.value)}
+                  aria-label="Creator wallet public address"
+                  placeholder={
+                    feed?.environment === "test"
+                      ? "Creator wallet (optional in the sandbox)"
+                      : "Creator wallet public address"
+                  }
+                />
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={quoteDraft}
+                    disabled={quoting || loadingPr}
+                    className="flex-1 rounded-xl bg-cyan-300 px-4 py-2.5 text-sm font-semibold text-[#041017] transition hover:bg-cyan-200 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {quoting ? "Quoting…" : "Get Panta quote"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => copyDraft(draft)}
+                    className="rounded-xl border border-white/10 px-3 py-2.5 text-xs text-slate-300 transition hover:border-cyan-300/40 hover:text-white"
+                  >
+                    {copied ? "Copied" : "Copy JSON"}
+                  </button>
+                </div>
+
+                {quoteError ? (
+                  <div className="mt-3 rounded-xl border border-rose-300/20 bg-rose-300/[0.06] p-3 text-xs text-rose-200">
+                    {quoteError}
+                  </div>
+                ) : null}
+
+                {quoteResult?.quote ? (
+                  <div className="mt-3 space-y-1.5 rounded-xl border border-emerald-300/20 bg-emerald-300/[0.05] p-3 text-xs leading-5">
+                    <div className="font-medium text-emerald-200">
+                      Panta accepted the parameters
+                      {quoteResult.environment === "test" ? " (sandbox, not mainnet)" : ""}
+                    </div>
+                    <div className="text-slate-300">Creation fee: {usdc(quoteResult.quote.paymentUsdc)}</div>
+                    <div className="text-slate-400">
+                      {usdc(quoteResult.quote.liquidityInjectionUsdc)} seeds liquidity ·{" "}
+                      {usdc(quoteResult.quote.platformRevenueUsdc)} platform
+                    </div>
+                    <div className="truncate font-mono text-[11px] text-slate-400">
+                      Event address {shortAddress(quoteResult.quote.expectedEventPda)}
+                    </div>
+                    <div className="text-slate-500">
+                      Creator {shortAddress(quoteResult.wallet)}
+                      {quoteResult.walletIsSandboxFixture ? " (Panta sandbox fixture)" : ""} · quote expires{" "}
+                      {new Date(quoteResult.quote.expiresAt).toLocaleTimeString()}
+                    </div>
+                  </div>
+                ) : null}
+
+                {quoteResult?.pantaError ? (
+                  <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-300/[0.05] p-3 text-xs leading-5 text-amber-100/90">
+                    <div className="font-medium">
+                      Panta rejected the quote{quoteResult.pantaError.code ? `: ${quoteResult.pantaError.code}` : ""}
+                    </div>
+                    <div className="mt-1 text-amber-100/70">{quoteResult.pantaError.message}</div>
+                    {quoteResult.pantaError.fields
+                      ? Object.entries(quoteResult.pantaError.fields).map(([field, messages]) => (
+                          <div key={field} className="font-mono text-[11px] text-amber-100/60">
+                            {field}: {messages.join(" ")}
+                          </div>
+                        ))
+                      : null}
+                  </div>
+                ) : null}
+
+                <p className="mt-3 text-[11px] leading-4 text-slate-600">
+                  Next, in the creator&apos;s wallet: Panta builds the unsigned transaction, the wallet signs and
+                  broadcasts it, then Panta registers the market. ShipSignal never holds keys or funds.
+                </p>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         <section className="mt-5 grid gap-3 md:grid-cols-3">
           {[
             ["Evidence, not vibes", "Repository state is shown with its underlying evidence instead of a hidden score alone."],
-            ["Live vs demo is explicit", "ShipSignal never presents fixture data as live Panta market information."],
-            ["Non-custodial by design", "Future transaction flows keep signing in the user wallet. ShipSignal never handles seed phrases."],
+            ["Only like with like", "A crowd price is compared only with a market about this pull request, or one you link yourself, labelled as such."],
+            ["Non-custodial by design", "ShipSignal stops at Panta's quote. Signing and broadcasting stay in the creator's wallet; ShipSignal never handles seed phrases."],
           ].map(([title, body]) => (
             <div key={title} className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5">
               <div className="text-sm font-medium text-slate-200">{title}</div>

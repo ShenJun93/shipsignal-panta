@@ -68,3 +68,44 @@ export type DecisionSignal = {
   disagreement: number | null;
   interpretation: string;
 };
+
+// A Panta market whose text names the pull request or its repository.
+export type MarketMatch = {
+  market: PantaMarket;
+  reason: "pull-request" | "repository";
+};
+
+// Body of POST /markets/create/quote/ minus the wallet, built from repository evidence.
+export type DeliveryMarketDraft = {
+  question: string;
+  title: string;
+  description: string;
+  resolutionRule: string;
+  sourcesOfTruth: string[];
+  category: "other";
+  marketType: "standard";
+  region: "Global";
+  startTime: number;
+  endTime: number;
+  resolutionTime: number;
+  imageUrl: string;
+  deadlineDays: number;
+  shipSignalPrior: number;
+};
+
+export type MarketCreateQuote = {
+  createId: string;
+  expectedEventPda: string;
+  paymentUsdc: string;
+  liquidityInjectionUsdc: string;
+  platformRevenueUsdc: string;
+  marketType?: string;
+  expiresAt: string;
+};
+
+export type PantaError = {
+  status: number;
+  code: string | null;
+  message: string;
+  fields?: Record<string, string[]>;
+};

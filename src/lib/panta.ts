@@ -1,4 +1,4 @@
-import type { MarketFeed, PantaMarket } from "@/lib/types";
+import type { DeliveryMarketDraft, MarketCreateQuote, MarketFeed, PantaError, PantaMarket } from "@/lib/types";
 
 const DEMO_MARKETS: PantaMarket[] = [
   {
@@ -37,6 +37,18 @@ function apiKey() {
   return process.env.PANTA_API_KEY?.trim() || "";
 }
 
+// Carries Panta's error envelope ({ code, message, field | fields }) so callers can show what failed.
+export class PantaApiError extends Error {
+  constructor(public readonly detail: PantaError) {
+    super(`Panta API ${detail.status}${detail.code ? ` ${detail.code}` : ""}: ${detail.message}`);
+  }
+}
+
+export function pantaEnvironment(): MarketFeed["environment"] {
+  if (!apiKey()) return "demo";
+  return apiKey().startsWith("pk_test_") ? "test" : "production";
+}
+
 async function pantaFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const key = apiKey();
   if (!key) throw new Error("PANTA_API_KEY is not configured");
@@ -54,7 +66,18 @@ async function pantaFetch<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`Panta API ${response.status}: ${body.slice(0, 400)}`);
+    let envelope: { code?: string; message?: string; field?: string; fields?: Record<string, string[]> } = {};
+    try {
+      envelope = JSON.parse(body);
+    } catch {
+      // Non-JSON error body; keep the raw text below.
+    }
+    throw new PantaApiError({
+      status: response.status,
+      code: envelope.code || null,
+      message: (envelope.message || body).slice(0, 400),
+      fields: envelope.fields || (envelope.field ? { [envelope.field]: [envelope.message || "invalid"] } : undefined),
+    });
   }
 
   return response.json() as Promise<T>;
@@ -85,7 +108,7 @@ export async function getMarketFeed(options?: {
   const data = await pantaFetch<{ items: PantaMarket[]; nextCursor?: string | null }>(
     `/markets/?${params.toString()}`,
   );
-  const environment = apiKey().startsWith("pk_test_") ? "test" : "production";
+  const environment = pantaEnvironment();
 
   return {
     mode: "live",
@@ -108,6 +131,30 @@ export async function getMarket(marketId: string): Promise<PantaMarket> {
     return fixture;
   }
   return pantaFetch<PantaMarket>(`/markets/${encodeURIComponent(marketId)}/`);
+}
+
+// Step 1 of Panta's create flow: Panta validates the parameters and returns the USDC creation fee.
+// ShipSignal stops here. Building, signing and broadcasting the create transaction stay with the
+// creator's wallet.
+export async function quoteMarketCreate(draft: DeliveryMarketDraft, wallet: string): Promise<MarketCreateQuote> {
+  return pantaFetch<MarketCreateQuote>("/markets/create/quote/", {
+    method: "POST",
+    body: JSON.stringify({
+      wallet,
+      question: draft.question,
+      title: draft.title,
+      description: draft.description,
+      resolutionRule: draft.resolutionRule,
+      sourcesOfTruth: draft.sourcesOfTruth,
+      category: draft.category,
+      marketType: draft.marketType,
+      region: draft.region,
+      startTime: draft.startTime,
+      endTime: draft.endTime,
+      resolutionTime: draft.resolutionTime,
+      imageUrl: draft.imageUrl,
+    }),
+  });
 }
 
 export async function quotePrimaryBuy(input: {
