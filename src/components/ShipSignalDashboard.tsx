@@ -762,7 +762,7 @@ export default function ShipSignalDashboard() {
           {[
             ["Evidence, not vibes", "Repository state is shown with its underlying evidence instead of a hidden score alone."],
             ["Only like with like", "A crowd price is compared only with a market about this pull request, or one you link yourself, labelled as such."],
-            ["Non-custodial by design", "ShipSignal stops at Panta's quote. Signing and broadcasting stay in the creator's wallet; ShipSignal never handles seed phrases."],
+            ["Non-custodial by design", "ShipSignal stops before signing: Panta quotes the market and builds the unsigned transaction, and signing and broadcasting stay in the creator's wallet. ShipSignal never handles seed phrases."],
           ].map(([title, body]) => (
             <div key={title} className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5">
               <div className="text-sm font-medium text-slate-200">{title}</div>
