@@ -23,7 +23,7 @@ type GitHubPullResponse = {
   updated_at: string;
   merged_at?: string | null;
   head?: { sha?: string | null };
-  base?: { sha?: string | null };
+  base?: { sha?: string | null; repo?: { full_name?: string | null } | null };
   user?: { login?: string | null };
   labels?: GitHubLabel[];
 };
@@ -111,12 +111,14 @@ export async function getPullRequestSignal(url: string): Promise<GitHubPullReque
 
   const pr = (await response.json()) as GitHubPullResponse;
   const scored = scorePullRequest(pr);
+  // GitHub follows renames and transfers; report the canonical name so every link agrees.
+  const repository = pr.base?.repo?.full_name || `${owner}/${repo}`;
 
   return {
     source: "github",
     fetchedAt: new Date().toISOString(),
     url: pr.html_url,
-    repository: `${owner}/${repo}`,
+    repository,
     number,
     title: pr.title,
     state: pr.state,
