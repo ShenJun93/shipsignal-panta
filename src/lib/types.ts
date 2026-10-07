@@ -101,6 +101,17 @@ export type MarketCreateQuote = {
   platformRevenueUsdc: string;
   marketType?: string;
   expiresAt: string;
+  disclaimer?: string;
+};
+
+export type UnsignedCreateTransaction = {
+  transaction: string;
+  transactionBytes: number;
+  recentBlockhash: string;
+  lastValidBlockHeight: number;
+  blockhashExpiryHintSec: number | null;
+  derived: Record<string, string>;
+  disclaimer?: string;
 };
 
 export type PantaError = {

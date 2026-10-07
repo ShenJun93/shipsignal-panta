@@ -6,7 +6,7 @@ ShipSignal turns a GitHub pull request into a question a prediction market can p
 
 1. **Observe.** It scores the pull request from public GitHub evidence (draft state, mergeability, checks, age) and shows the evidence behind the score.
 2. **Match.** It scans the [Panta](https://panta.market) catalog for a market that names the pull request or its repository. A crowd price is compared with the repository evidence only when the market is about that pull request, or when the user links one and the page labels it as user-linked.
-3. **Draft.** When no market exists, it drafts one that resolves from GitHub: question, resolution rule, sources of truth, trading window. It then asks Panta to quote it (`POST /markets/create/quote/`), so Panta validates the parameters and returns the USDC creation fee. Building, signing and broadcasting stay with the creator's wallet; ShipSignal never holds keys or funds.
+3. **Draft.** When no market exists, it drafts one that resolves from GitHub: question, resolution rule, sources of truth, trading window. It then asks Panta to quote it (`POST /markets/create/quote/`), so Panta validates the parameters and returns the USDC creation fee, and to build the unsigned create transaction (`POST /markets/create/build/`). Building, signing and broadcasting stay with the creator's wallet; ShipSignal never holds keys or funds.
 
 ## Production demo
 
@@ -80,7 +80,7 @@ POST /api/market-draft
 { "pr": "https://github.com/owner/repo/pull/123", "days": 14, "wallet": "<creator public address>" }
 ```
 
-Drafts the market and calls Panta's create quote. Returns Panta's quote (fee, liquidity portion, expected event address, expiry) or Panta's error envelope. With a `pk_test_` key the wallet is optional and defaults to Panta's sandbox fixture creator. Nothing is signed or broadcast.
+Drafts the market, calls Panta's create quote, then Panta's create build. Returns the quote (fee, liquidity portion, expected event address, expiry) and the unsigned create transaction (base64, blockhash, derived accounts) for the creator's wallet to sign, or Panta's error envelope. With a `pk_test_` key the wallet is optional and defaults to Panta's sandbox fixture creator. ShipSignal signs and broadcasts nothing.
 
 ### Panta market feed
 
