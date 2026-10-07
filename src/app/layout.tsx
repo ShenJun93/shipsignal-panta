@@ -12,10 +12,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const description =
+  "Turn a GitHub pull request into a Panta prediction market: score the delivery evidence, find markets about the PR, and draft one that resolves from GitHub.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://shipsignal-panta.vercel.app"),
   title: "ShipSignal — Engineering delivery intelligence",
-  description:
-    "Compare public software-delivery evidence with Panta prediction-market probability.",
+  description,
+  openGraph: {
+    title: "ShipSignal — turn a pull request into a market the crowd can price",
+    description,
+    url: "/",
+    siteName: "ShipSignal",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ShipSignal — turn a pull request into a market the crowd can price",
+    description,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
